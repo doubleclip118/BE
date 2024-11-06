@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Home Page</title>
+</head>
+<body>
+<button id="backendRequestButton">Request Backend</button>
+<script th:inline="javascript">
+    // JSON 형식으로 안전하게 authToken을 JavaScript 문자열 변수로 할당
+    const authToken = [[${authToken}]]
+
+    // localStorage에 토큰 저장
+    if (authToken) {
+        localStorage.setItem('authToken', authToken);
+    }
+</script>
+<script>
+    document.getElementById("backendRequestButton").addEventListener("click", function() {
+        // 1. localStorage에서 토큰 가져오기
+        const token = localStorage.getItem("authToken");
+
+        // 2. 토큰이 존재하는지 확인
+        if (!token) {
+            alert("토큰이 없습니다. 로그인하세요.");
+            return;
+        }
+
+        // 3. 헤더에 토큰을 포함하여 /backend로 요청 보내기
+        fetch("/articles", {
+            method: "GET",
+            headers: {
+                "Authorization": 'Bearer ' + token
+            }
+        })
+            .then(response => {
+                if (response.ok) {
+                    // backend-view.html로 리디렉션 처리
+                    window.location.href = "/articles";
+                } else {
+                    alert("요청에 실패했습니다.");
+                }
+            })
+            .catch(error => console.error("Error:", error));
+    });
+</script>
+</body>
+</html>
