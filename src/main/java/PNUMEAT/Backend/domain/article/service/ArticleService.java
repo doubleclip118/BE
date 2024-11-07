@@ -7,26 +7,37 @@ import PNUMEAT.Backend.domain.article.enums.Category;
 import PNUMEAT.Backend.domain.article.repository.ArticleRepository;
 import PNUMEAT.Backend.domain.auth.entity.User;
 import PNUMEAT.Backend.global.error.Team24Exception;
+import PNUMEAT.Backend.global.images.ImageService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import org.springframework.web.multipart.MultipartFile;
 
 import static PNUMEAT.Backend.global.error.ErrorCode.*;
 
 @Service
 public class ArticleService {
+    private final ImageService imageService;
     private final ArticleRepository articleRepository;
 
-    public ArticleService(ArticleRepository articleRepository) {
+    public ArticleService(ImageService imageService, ArticleRepository articleRepository) {
+        this.imageService = imageService;
         this.articleRepository = articleRepository;
     }
 
     @Transactional
-    public Article save(ArticleRequest articleRequest, User user){
-        Article article = toEntity(articleRequest, user);
+    public Article save(ArticleRequest articleRequest, User user, MultipartFile multipartFile){
 
-        return articleRepository.save(article);
+        Article article = toEntity(articleRequest, user,null);
+
+        Article savedArticle = articleRepository.save(article);
+
+        Long articleId = article.getArticleId();
+
+        article.insertimgUrl(imageService.imageload(multipartFile, articleId));
+
+        return savedArticle;
     }
 
     @Transactional(readOnly = true)
@@ -54,18 +65,23 @@ public class ArticleService {
             throw new Team24Exception(ARTICLE_FORBIDDEN_ERROR);
         }
 
+        imageService.deleteImageByUrl(article.getImage());
+
         articleRepository.deleteById(id);
     }
 
     @Transactional
-    public void updateById(Long id, ArticleRequest articleRequest, User user){
+    public void updateById(Long id, ArticleRequest articleRequest, User user, MultipartFile multipartFile){
         Article article = articleRepository.findById(id)
                 .orElseThrow(()-> new Team24Exception(ARTICLE_NOT_FOUND_ERROR));
 
         if(!article.getUser().getId().equals(user.getId())){
             throw new Team24Exception(ARTICLE_FORBIDDEN_ERROR);
         }
-        article.updateArticle(articleRequest.title(), articleRequest.content(), articleRequest.category(), articleRequest.image());
+
+        String imageload = imageService.imageload(multipartFile, article.getArticleId());
+
+        article.updateArticle(articleRequest.title(), articleRequest.content(), articleRequest.category(), imageload);
     }
 
     @Transactional(readOnly = true)
@@ -74,13 +90,13 @@ public class ArticleService {
     }
 
 
-    public Article toEntity(ArticleRequest articleRequest, User user) {
+    public Article toEntity(ArticleRequest articleRequest, User user, String imgUrl) {
         return Article.builder()
                 .user(user)
                 .title(articleRequest.title())
                 .content(articleRequest.content())
                 .category(articleRequest.category())
-                .image(articleRequest.image())
+                .image(imgUrl)
                 .deleted(false)
                 .build();
     }

@@ -1,4 +1,4 @@
-package PNUMEAT.Backend.images;
+package PNUMEAT.Backend.global.images;
 
 import java.io.File;
 import java.io.IOException;

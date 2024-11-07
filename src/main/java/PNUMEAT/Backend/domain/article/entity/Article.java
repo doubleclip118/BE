@@ -45,6 +45,10 @@ public class Article {
         this.image = image;
     }
 
+    public void insertimgUrl(String image){
+        this.image = image;
+    }
+
     @Builder
     public Article(String title, User user, String content, Category category, String image, boolean deleted) {
         this.title = title;

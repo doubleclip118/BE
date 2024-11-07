@@ -14,6 +14,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
+import org.springframework.web.multipart.MultipartFile;
+
 
 @Controller
 @RequestMapping("/articles")
@@ -43,18 +46,20 @@ public class ArticleController {
 
     @GetMapping("/new")
     public String getNewArticlePage(Model model, HttpServletRequest request) {
-        model.addAttribute("articleRequest", new ArticleRequest(null,null,null,null));
+        model.addAttribute("articleRequest", new ArticleRequest(null,null,null));
         model.addAttribute("categories", Category.values());
         addAuthorizationHeaderInSession(request);
         return "article/new";
     }
 
     @PostMapping
-    public String createArticle(@RequestBody ArticleRequest articleRequest,
+    public String createArticle(
+                                @ModelAttribute ArticleRequest articleRequest,
                                 @LoginMember User user,
-                                HttpServletRequest request) {
+                                HttpServletRequest request,
+                                @RequestParam("upload") MultipartFile multipartFile) {
         addAuthorizationHeaderInSession(request);
-        articleService.save(articleRequest, user);
+        articleService.save(articleRequest, member, multipartFile);
         return "redirect:/articles/";
     }
 
@@ -83,8 +88,9 @@ public class ArticleController {
     public String updateArticle(@PathVariable Long id,
                                 @RequestBody ArticleRequest articleRequest,
                                 @LoginMember User user,
-                                HttpServletRequest request) {
-        articleService.updateById(id, articleRequest, user);
+                                HttpServletRequest request,
+                                @RequestParam("upload") MultipartFile multipartFile) {
+        articleService.updateById(id, articleRequest, user, multipartFile);
         addAuthorizationHeaderInSession(request);
         return "redirect:/articles";
     }
