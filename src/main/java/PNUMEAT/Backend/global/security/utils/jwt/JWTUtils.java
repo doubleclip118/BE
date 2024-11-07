@@ -66,6 +66,7 @@ public class JWTUtils {
     public String getUUID(String uuid) {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(uuid).getPayload()
                 .get("uuid", String.class);
+
     }
 
     public String getRole(String token) {

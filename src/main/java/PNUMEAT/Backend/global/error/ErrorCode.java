@@ -13,6 +13,7 @@ public enum ErrorCode {
     TOKEN_UNSUPPORTED_ERROR(HttpStatus.BAD_REQUEST, "지원하지 않는 Token 입니다."),
     TOKEN_SIGNATURE_ERROR(HttpStatus.BAD_REQUEST, "Token 의 서명이 유효하지 않습니다."),
     TOKEN_ERROR(HttpStatus.BAD_REQUEST, "잘못된 Token 입니다."),
+
     ARTICLE_FORBIDDEN_ERROR(HttpStatus.FORBIDDEN, "게시글 권한이 없습니다."),
 
     // ARTICLE

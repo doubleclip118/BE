@@ -1,10 +1,15 @@
 package PNUMEAT.Backend.domain.auth.entity;
 
+
 import PNUMEAT.Backend.domain.article.entity.Article;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import java.util.UUID;
 import lombok.Getter;
 

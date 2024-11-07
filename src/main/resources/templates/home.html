@@ -8,7 +8,9 @@
 <button id="backendRequestButton">Request Backend</button>
 <script th:inline="javascript">
     // JSON 형식으로 안전하게 authToken을 JavaScript 문자열 변수로 할당
+
     const authToken = [[${authToken}]]
+
 
     // localStorage에 토큰 저장
     if (authToken) {

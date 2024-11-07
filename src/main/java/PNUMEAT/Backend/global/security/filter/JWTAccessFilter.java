@@ -51,13 +51,12 @@ public class JWTAccessFilter extends OncePerRequestFilter {
 
         String authorization = request.getHeader(AuthConstant.AUTHORIZATION);
 
+
         String authorizationInSession = (String) request.getSession().getAttribute("authToken");
 
         if(authorizationInSession != null && authorization == null){
             authorization = authorizationInSession;
         }
-
-        log.info(authorization);
 
         //Authorization 헤더 검증
         if (checkHeader(authorization)) {
