@@ -8,6 +8,7 @@ import PNUMEAT.Backend.domain.auth.entity.Member;
 import PNUMEAT.Backend.global.security.annotation.LoginMember;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +19,7 @@ import java.util.Map;
 
 @Controller
 @RequestMapping("/articles")
+@Slf4j
 public class ArticleController {
 
     private final ArticleService articleService;
@@ -26,35 +28,48 @@ public class ArticleController {
         this.articleService = articleService;
     }
 
-    /*
     @GetMapping
     public String getArticlesPage(Model model, HttpServletRequest request) {
         model.addAttribute("articles", articleService.findAllArticles());
-        HttpSession session = request.getSession();
-        session.setAttribute("authToken", request.getHeader("Authorization"));
+        addAuthorizationHeaderInSession(request);
         return "article/list";
-    } */
+    }
+
+    @GetMapping("/{id}")
+    public String getArticleDetail(@PathVariable Long id, Model model, HttpServletRequest request) {
+        Article article = articleService.findById(id);
+        model.addAttribute("article", article);
+        addAuthorizationHeaderInSession(request);
+        return "article/detail";
+    }
 
     @GetMapping("/new")
     public String getNewArticlePage(Model model, HttpServletRequest request) {
         model.addAttribute("articleRequest", new ArticleRequest(null,null,null,null));
         model.addAttribute("categories", Category.values());
-        HttpSession session = request.getSession();
-        session.setAttribute("authToken", request.getHeader("Authorization"));
+        addAuthorizationHeaderInSession(request);
         return "article/new";
     }
 
     @PostMapping
-    @ResponseBody
-    public Map<String, String> createArticle(@ModelAttribute ArticleRequest articleRequest, HttpServletRequest request, @LoginMember Member member) {
-        Article article = articleService.save(articleRequest, member);
-        HttpSession session = request.getSession();
-        session.setAttribute("authToken", request.getHeader("Authorization"));
-        Map<String, String> response = new HashMap<>();
-        response.put("category", article.getCategory().name());
-        return response;
+    public String createArticle(@RequestBody ArticleRequest articleRequest,
+                                @LoginMember Member member,
+                                HttpServletRequest request) {
+        addAuthorizationHeaderInSession(request);
+        articleService.save(articleRequest, member);
+        return "redirect:/articles/";
     }
 
+    @GetMapping("/category/{category}")
+    public String getArticlesByCategory(@PathVariable Category category, Model model, HttpServletRequest request) {
+        List<Article> articles = articleService.findByCategory(category);
+
+        addAuthorizationHeaderInSession(request);
+
+        model.addAttribute("articles", articles);
+        model.addAttribute("selectedCategory", category.getName());
+        return "article/list";
+    }
 
     @GetMapping("/{id}/edit")
     public String getEditArticlePage(@PathVariable Long id, Model model, HttpServletRequest request) {
@@ -62,49 +77,41 @@ public class ArticleController {
         model.addAttribute("article", article);
         model.addAttribute("categories", Category.values());
 
-        HttpSession session = request.getSession();
-        session.setAttribute("authToken", request.getHeader("Authorization"));
+        addAuthorizationHeaderInSession(request);
         return "article/edit";
     }
 
     @PostMapping("/{id}")
-    public String updateArticle(@PathVariable Long id, @ModelAttribute ArticleRequest articleRequest, @LoginMember Member member) {
+    public String updateArticle(@PathVariable Long id,
+                                @RequestBody ArticleRequest articleRequest,
+                                @LoginMember Member member,
+                                HttpServletRequest request) {
         articleService.updateById(id, articleRequest, member);
+        addAuthorizationHeaderInSession(request);
         return "redirect:/articles";
     }
-
-    @PostMapping("/{id}/delete")
-    public String deleteArticle(@PathVariable Long id, @LoginMember Member member) {
+//
+    @DeleteMapping("/{id}")
+    public String deleteArticle(@PathVariable Long id,
+                                @LoginMember Member member,
+                                HttpServletRequest request) {
         articleService.deleteById(id, member);
+        addAuthorizationHeaderInSession(request);
         return "redirect:/articles";
     }
+//
+//
+//
+//    @GetMapping
+//    public String getMainPage() {
+//        return "article/main";
+//    }
+//
 
-    @GetMapping("/{id}")
-    public String getArticleDetail(@PathVariable Long id, Model model, HttpServletRequest request) {
-        Article article = articleService.findById(id);
-        model.addAttribute("article", article);
 
+    private void addAuthorizationHeaderInSession(HttpServletRequest request) {
         HttpSession session = request.getSession();
         session.setAttribute("authToken", request.getHeader("Authorization"));
-        return "article/detail";
     }
-
-    @GetMapping
-    public String getMainPage() {
-        return "article/main";
-    }
-
-    @GetMapping("/category/{category}")
-    public String getArticlesByCategory(@PathVariable Category category, Model model, HttpServletRequest request) {
-        List<Article> articles = articleService.findByCategory(category);
-
-        HttpSession session = request.getSession();
-        session.setAttribute("authToken", request.getHeader("Authorization"));
-
-        model.addAttribute("articles", articles);
-        model.addAttribute("selectedCategory", category.getName());
-        return "article/list";
-    }
-
 
 }

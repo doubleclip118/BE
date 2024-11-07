@@ -20,7 +20,7 @@ public class TestController {
             }
         }
 
-        return "home";
+        return "article/main";
     }
 
     @GetMapping("/backend")

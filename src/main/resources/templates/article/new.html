@@ -30,46 +30,50 @@
                 </option>
             </select>
         </div>
-
-        <button type="submit" class="btn btn-primary btn-block">작성</button>
+        <button type="button" class="btn btn-primary btn-block" onclick="postNewArticle()">작성</button>
     </form>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    document.getElementById('createArticleForm').addEventListener('submit', function (event) {
-        event.preventDefault();
-        const token = localStorage.getItem('authToken');
-        const formData = new FormData(this);
-        const data = {
-            title: formData.get('title'),
-            content: formData.get('content'),
-            category: formData.get('category')
-        };
+    function getAuthToken() {
+        return localStorage.getItem('authToken');
+    }
 
-        fetch('/api/articles', {
+    function postNewArticle() {
+        const token = getAuthToken();
+        if (!token) {
+            alert('로그인이 필요합니다.');
+            location.href = '/login';
+            return;
+        }
+
+        const form = document.getElementById('createArticleForm');
+        const formData = new FormData(form);
+        const jsonData = Object.fromEntries(formData);
+
+        fetch(`/articles`, {
             method: 'POST',
             headers: {
-                'Authorization': `Bearer ${token}`,
+                'Authorization': 'Bearer ' + token,
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(data)
-        }).then(response => {
-            if (response.ok) {
-                alert('게시글이 작성되었습니다.');
-                response.json().then(result => {
-                    const category = result.category; // 서버에서 반환된 카테고리 값
-                    location.href = `/articles/category/${category}`;
-                });
-            } else {
-                alert('게시글 작성에 실패했습니다.');
-            }
-        }).catch(error => {
-            console.error('네트워크 또는 서버 오류:', error);
-            alert('서버 오류로 인해 게시글 작성에 실패했습니다.');
-        });
-    });
+            body: JSON.stringify(jsonData)
+        })
+            .then(response => {
+                if (response.redirected) {
+                    alert('게시글이 작성되었습니다.');
+                    location.href = `/articles`;
+                } else {
+                    alert('게시글 작성에 실패했습니다.');
+                }
+            })
+            .catch(error => {
+                console.error('네트워크 또는 서버 오류:', error);
+                alert('서버 오류로 인해 게시글 작성에 실패했습니다.');
+            });
+    }
 </script>
 </body>
 </html>
