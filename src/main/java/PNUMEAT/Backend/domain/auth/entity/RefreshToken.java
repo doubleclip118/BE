@@ -12,7 +12,7 @@ public class RefreshToken {
 
     @OneToOne
     @JoinColumn(name = "member_id")
-    private Member member;
+    private User user;
 
     private String token;
 
@@ -21,8 +21,8 @@ public class RefreshToken {
     protected RefreshToken() {
     }
 
-    public RefreshToken(Member member, String token, String expiration) {
-        this.member = member;
+    public RefreshToken(User user, String token, String expiration) {
+        this.user = user;
         this.token = token;
         this.expiration = expiration;
     }
