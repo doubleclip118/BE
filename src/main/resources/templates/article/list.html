@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>게시물 목록</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body class="container mt-5">
+
+<h1 class="mb-4" >게시물 목록</h1>
+
+<!-- 게시글 목록을 표시할 영역 -->
+<ul id="articleList" class="list-group mb-3">
+    <li class="list-group-item d-flex justify-content-between align-items-center" th:each="article : ${articles}">
+        <span th:text="'ID: ' + ${article.articleId}">ID</span>
+        <button th:onclick="'viewArticleWithAuth(' + ${article.articleId} + ')'" th:text="${article.title}">제목</button>
+    </li>
+</ul>
+
+<button class="btn btn-success" onclick="createNewArticle()">새 글 작성</button>
+
+<script th:inline="javascript">
+    function getAuthToken() {
+        return localStorage.getItem('authToken');
+    }
+
+    function viewArticleWithAuth(articleId) {
+        const token = getAuthToken();
+        if (!token) {
+            alert('로그인이 필요합니다.');
+            location.href = '/login';
+            return;
+        }
+
+        fetch(`/articles/${articleId}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': 'Bearer ' + token
+            }
+        })
+            .then(response => {
+                if (response.ok) {
+                    location.href = `/articles/${articleId}`;
+                } else {
+                    alert('게시물 조회 권한이 없습니다.');
+                }
+            })
+            .catch(error => {
+                console.error('게시물 조회 오류:', error);
+                alert('서버 오류로 인해 게시물을 로드할 수 없습니다.');
+            });
+    }
+
+    // 새 게시글 작성 페이지로 이동
+    function createNewArticle() {
+        const token = getAuthToken();
+        if (!token) {
+            alert('로그인이 필요합니다.');
+            location.href = '/login';
+            return;
+        }
+
+        fetch('/articles/new', {
+            method: 'GET',
+            headers: {
+                'Authorization': 'Bearer ' + token
+            }
+        }).then(response => {
+            if (response.ok) {
+                location.href = '/articles/new';
+            } else {
+                alert('글 작성 권한이 없습니다.');
+            }
+        }).catch(error => {
+            console.error('새 글 작성 요청 오류:', error);
+            alert('서버 오류로 새 글 작성 페이지를 로드할 수 없습니다.');
+        });
+    }
+</script>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.6.0/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

@@ -1,5 +1,11 @@
 package PNUMEAT.Backend.domain.auth.entity;
 
+
+import PNUMEAT.Backend.domain.article.entity.Article;
+import jakarta.persistence.*;
+
+import java.util.ArrayList;
+import java.util.List;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -22,6 +28,9 @@ public class Member {
     private String uuid;
 
     private String role;
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Article> articles = new ArrayList<>();
 
     protected Member() {
     }
