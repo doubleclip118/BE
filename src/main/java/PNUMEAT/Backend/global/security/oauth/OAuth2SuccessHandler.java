@@ -72,7 +72,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         response.addCookie(access);
         response.addCookie(refresh);
 
-        response.sendRedirect("http://localhost:8080/");
+        response.sendRedirect("/");
     }
 
     private String getRole(Authentication authentication) {
