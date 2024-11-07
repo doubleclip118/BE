@@ -86,7 +86,7 @@ public class ArticleController {
 
     @PostMapping("/{id}")
     public String updateArticle(@PathVariable Long id,
-                                @RequestBody ArticleRequest articleRequest,
+                                @ModelAttribute ArticleRequest articleRequest,
                                 @LoginMember User user,
                                 HttpServletRequest request,
                                 @RequestParam("upload") MultipartFile multipartFile) {
