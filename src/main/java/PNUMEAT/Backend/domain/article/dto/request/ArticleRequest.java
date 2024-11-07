@@ -5,6 +5,5 @@ import PNUMEAT.Backend.domain.auth.entity.Member;
 
 public record ArticleRequest(String title,
                              String content,
-                             Category category,
-                             String image) {
+                             Category category){
 }
