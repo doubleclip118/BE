@@ -54,6 +54,10 @@ public class JWTAccessFilter extends OncePerRequestFilter {
 
         String authorizationInSession = (String) request.getSession().getAttribute("authToken");
 
+        if(authorizationInSession == null && authorization == null){
+            response.sendRedirect("/");
+            return;
+        }
         if(authorizationInSession != null && authorization == null){
             authorization = authorizationInSession;
         }

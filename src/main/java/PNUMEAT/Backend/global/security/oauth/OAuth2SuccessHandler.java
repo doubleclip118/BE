@@ -4,9 +4,8 @@ import static PNUMEAT.Backend.domain.auth.constant.AuthConstant.ACCESS_TOKEN;
 import static PNUMEAT.Backend.domain.auth.constant.AuthConstant.REFRESH_TOKEN;
 
 import PNUMEAT.Backend.domain.auth.entity.RefreshToken;
-import PNUMEAT.Backend.domain.auth.repository.MemberRepository;
+import PNUMEAT.Backend.domain.auth.repository.UserRepository;
 import PNUMEAT.Backend.domain.auth.service.RefreshTokenService;
-import PNUMEAT.Backend.global.error.dto.response.ApiResponse;
 import PNUMEAT.Backend.global.security.utils.jwt.JWTUtils;
 import PNUMEAT.Backend.global.security.utils.servletUtils.cookie.CookieUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -32,7 +31,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
     private final JWTUtils jwtUtil;
     private final RefreshTokenService refreshTokenService;
-    private final MemberRepository memberRepository;
+    private final UserRepository userRepository;
     private final ObjectMapper objectMapper;
 
     @Override
@@ -47,7 +46,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
 //        Optional<Member> findMember = memberRepository.findByUuid(uuid);
 
-        Optional<RefreshToken> findRefreshToken = refreshTokenService.findRefreshToken(customUserDetails.getMember().getId());
+        Optional<RefreshToken> findRefreshToken = refreshTokenService.findRefreshToken(customUserDetails.getUser().getId());
 
         String refreshToken = null;
 
@@ -73,7 +72,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         response.addCookie(access);
         response.addCookie(refresh);
 
-        response.sendRedirect("http://localhost:8080/");
+        response.sendRedirect("/");
     }
 
     private String getRole(Authentication authentication) {

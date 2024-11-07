@@ -4,7 +4,7 @@ import PNUMEAT.Backend.domain.article.dto.request.ArticleRequest;
 import PNUMEAT.Backend.domain.article.entity.Article;
 import PNUMEAT.Backend.domain.article.enums.Category;
 import PNUMEAT.Backend.domain.article.service.ArticleService;
-import PNUMEAT.Backend.domain.auth.entity.Member;
+import PNUMEAT.Backend.domain.auth.entity.User;
 import PNUMEAT.Backend.global.security.annotation.LoginMember;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -13,10 +13,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.springframework.web.multipart.MultipartFile;
+
 
 @Controller
 @RequestMapping("/articles")
@@ -55,7 +55,7 @@ public class ArticleController {
     @PostMapping
     public String createArticle(
                                 @ModelAttribute ArticleRequest articleRequest,
-                                @LoginMember Member member,
+                                @LoginMember User user,
                                 HttpServletRequest request,
                                 @RequestParam("upload") MultipartFile multipartFile) {
         addAuthorizationHeaderInSession(request);
@@ -87,19 +87,19 @@ public class ArticleController {
     @PostMapping("/{id}")
     public String updateArticle(@PathVariable Long id,
                                 @RequestBody ArticleRequest articleRequest,
-                                @LoginMember Member member,
+                                @LoginMember User user,
                                 HttpServletRequest request,
                                 @RequestParam("upload") MultipartFile multipartFile) {
-        articleService.updateById(id, articleRequest, member, multipartFile);
+        articleService.updateById(id, articleRequest, user, multipartFile);
         addAuthorizationHeaderInSession(request);
         return "redirect:/articles";
     }
 //
     @DeleteMapping("/{id}")
     public String deleteArticle(@PathVariable Long id,
-                                @LoginMember Member member,
+                                @LoginMember User user,
                                 HttpServletRequest request) {
-        articleService.deleteById(id, member);
+        articleService.deleteById(id, user);
         addAuthorizationHeaderInSession(request);
         return "redirect:/articles";
     }
