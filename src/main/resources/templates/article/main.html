@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Apptive Study</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Apptive Study</h2> <!-- 제목 아래 간격 추가 -->
+    <div class="row">
+        <div class="col-md-3 mb-3">
+            <button type="button" class="btn btn-primary btn-block text-center" onclick="navigateToCategory('BACKEND')">백엔드</button>
+        </div>
+        <div class="col-md-3 mb-3">
+            <button type="button" class="btn btn-secondary btn-block text-center" onclick="navigateToCategory('FRONTEND')">프론트</button>
+        </div>
+        <div class="col-md-3 mb-3">
+            <button type="button" class="btn btn-success btn-block text-center" onclick="navigateToCategory('ANDROID')">안드로이드</button>
+        </div>
+        <div class="col-md-3 mb-3">
+            <button type="button" class="btn btn-info btn-block text-center" onclick="navigateToCategory('GAME')">게임</button>
+        </div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    // JSON 형식으로 안전하게 authToken을 JavaScript 문자열 변수로 할당
+    const authToken = [[${authToken}]]
+
+    // localStorage에 토큰 저장
+    if (authToken) {
+        localStorage.setItem('authToken', authToken);
+    }
+</script>
+
+<script th:inline="javascript">
+    function getAuthToken() {
+        return localStorage.getItem('authToken');
+    }
+
+    function navigateToCategory(category) {
+        const token = getAuthToken();
+        if (!token) {
+            alert('로그인이 필요합니다.');
+            location.href = '/login';
+            return;
+        }
+
+        fetch(`/articles/category/${category}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': 'Bearer ' + token
+            }
+        })
+            .then(response => {
+                if (response.ok) {
+                    location.href = `/articles/category/${category}`;
+                } else {
+                    alert('카테고리별 게시물 로딩에 실패했습니다.');
+                }
+            })
+            .catch(error => {
+                console.error('카테고리 게시물 로딩 오류:', error);
+                alert('서버 오류로 인해 게시물을 로드할 수 없습니다.');
+            });
+    }
+</script>
+</body>
+</html>

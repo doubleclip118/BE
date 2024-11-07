@@ -86,10 +86,8 @@ public class SecurityConfiguration {
     public WebSecurityCustomizer webSecurityCustomizer() {
         return web -> web.ignoring()
                 .requestMatchers("/favicon.ico")
-                .requestMatchers("/backend-view")
                 .requestMatchers("/error")
                 .requestMatchers("/")
                 .requestMatchers(toH2Console());
     }
-
 }
