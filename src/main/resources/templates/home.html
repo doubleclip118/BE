@@ -39,6 +39,7 @@
                     window.location.href = "/articles";
                 } else {
                     alert("요청에 실패했습니다.");
+                    location.href = '/login';
                 }
             })
             .catch(error => console.error("Error:", error));

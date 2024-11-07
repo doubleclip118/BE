@@ -20,13 +20,9 @@
 
 
 <div class="d-flex justify-content-between">
-    <!--    <button class="btn btn-primary" onclick="editArticle([[${article.articleId}]])">수정</button>-->
-    <button th:onclick="'editArticle(' + ${article.articleId} + ')'">수정</button>
-    <!--    <button class="btn btn-danger" onclick="deleteArticle([[${article.articleId}]])">삭제</button>-->
-    <button th:onclick="'deleteArticle(' + ${article.articleId} + ')'">삭제</button>
     <button class="btn btn-primary btn-sm mr-2" th:onclick="'editArticle(' + ${article.articleId} + ')'">수정</button>
     <button class="btn btn-danger btn-sm" th:onclick="'deleteArticle(' + ${article.articleId} + ')'">삭제</button>
-    <button class="btn btn-secondary" onclick="location.href='/articles'">목록으로 돌아가기</button>
+    <button class="btn btn-secondary" onclick="location.href='/'">홈으로 돌아가기</button>
 </div>
 
 
@@ -38,17 +34,16 @@
 
     // 게시글 삭제
     function deleteArticle(id) {
-        console.log("delete")
         const token = getAuthToken();
-        fetch(`/api/articles/${id}`, {
+        fetch(`/articles/${id}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': 'Bearer '+token
             }
         }).then(response => {
-            if (response.ok) {
+            if (response.redirected) {
                 alert('삭제되었습니다.');
-                location.reload();
+                location.href = `/articles`;
             } else {
                 alert('삭제에 실패했습니다.');
             }
@@ -57,7 +52,7 @@
 
     function editArticle(id) {
         const token = getAuthToken();
-        fetch(`/api/articles/${id}/edit`, {
+        fetch(`/articles/${id}/edit`, {
             method: 'GET',
             headers: {
                 'Authorization': 'Bearer '+token

@@ -74,7 +74,7 @@ public class ArticleService {
     }
 
 
-    public Article toEntity(ArticleRequest articleRequest,Member member) {
+    public Article toEntity(ArticleRequest articleRequest, Member member) {
         return Article.builder()
                 .member(member)
                 .title(articleRequest.title())
