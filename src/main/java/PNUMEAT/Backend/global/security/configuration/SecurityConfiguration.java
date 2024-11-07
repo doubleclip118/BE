@@ -87,7 +87,6 @@ public class SecurityConfiguration {
         return web -> web.ignoring()
                 .requestMatchers("/favicon.ico")
                 .requestMatchers("/error")
-                .requestMatchers("/")
-                .requestMatchers(toH2Console());
+                .requestMatchers("/");
     }
 }

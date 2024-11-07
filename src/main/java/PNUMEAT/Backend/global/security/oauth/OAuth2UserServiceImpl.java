@@ -3,8 +3,8 @@ package PNUMEAT.Backend.global.security.oauth;
 import static PNUMEAT.Backend.domain.auth.constant.AuthConstant.KAKAO;
 import static PNUMEAT.Backend.domain.auth.constant.AuthConstant.NAVER;
 
-import PNUMEAT.Backend.domain.auth.entity.Member;
-import PNUMEAT.Backend.domain.auth.repository.MemberRepository;
+import PNUMEAT.Backend.domain.auth.entity.User;
+import PNUMEAT.Backend.domain.auth.repository.UserRepository;
 import PNUMEAT.Backend.global.security.oauth.oauthResponse.KakaoResponse;
 import PNUMEAT.Backend.global.security.oauth.oauthResponse.NaverResponse;
 import PNUMEAT.Backend.global.security.oauth.oauthResponse.OAuth2Response;
@@ -22,7 +22,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class OAuth2UserServiceImpl extends DefaultOAuth2UserService {
 
-    private final MemberRepository memberRepository;
+    private final UserRepository userRepository;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -45,18 +45,18 @@ public class OAuth2UserServiceImpl extends DefaultOAuth2UserService {
 
         String username = oAuth2Response.getProvider() + " " + oAuth2Response.getProviderId();
 
-        Optional<Member> memberOptional = memberRepository.findByUsername(username);
+        Optional<User> memberOptional = userRepository.findByUsername(username);
 
         if (memberOptional.isPresent()) {
-            Member member = memberOptional.get();
+            User user = memberOptional.get();
 
-            return new OAuth2UserImpl(member);
+            return new OAuth2UserImpl(user);
         }
 
-        Member member = new Member(oAuth2Response.getEmail(), username, "ROLE_USER");
+        User user = new User(oAuth2Response.getEmail(), username, "ROLE_USER");
 
-        memberRepository.save(member);
+        userRepository.save(user);
 
-        return new OAuth2UserImpl(member);
+        return new OAuth2UserImpl(user);
     }
 }

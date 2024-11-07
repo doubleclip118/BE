@@ -15,7 +15,7 @@ public class TestController {
     public String home(HttpServletRequest request, Model model){
         Cookie[] cookies = request.getCookies();
         for (Cookie cookie : cookies) {
-            if(cookie.getName().equals("access_token")){
+            if("access_token".equals(cookie.getName())){
                 model.addAttribute("authToken", cookie.getValue());
             }
         }

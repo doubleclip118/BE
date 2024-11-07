@@ -2,7 +2,7 @@ package PNUMEAT.Backend.domain.article.entity;
 
 
 import PNUMEAT.Backend.domain.article.enums.Category;
-import PNUMEAT.Backend.domain.auth.entity.Member;
+import PNUMEAT.Backend.domain.auth.entity.User;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,7 +15,6 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "articles")
 public class Article {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,8 +22,8 @@ public class Article {
     private String title;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
-    private Member member;
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     private String content;
     @Enumerated(EnumType.STRING)
@@ -47,9 +46,9 @@ public class Article {
     }
 
     @Builder
-    public Article(String title, Member member, String content, Category category, String image, boolean deleted) {
+    public Article(String title, User user, String content, Category category, String image, boolean deleted) {
         this.title = title;
-        this.member = member;
+        this.user = user;
         this.content = content;
         this.category = category;
         this.image = image;
