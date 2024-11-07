@@ -61,7 +61,7 @@ public class ArticleService {
         Article article = articleRepository.findById(id)
                 .orElseThrow(()-> new Team24Exception(ARTICLE_NOT_FOUND_ERROR));
 
-        if(!article.getMember().getId().equals(member.getId())){
+        if(!article.getMember().getId().equals(member.getId()) || !member.getRole().equals("ROLE_ADMIN")){
             throw new Team24Exception(ARTICLE_FORBIDDEN_ERROR);
         }
 
@@ -75,7 +75,7 @@ public class ArticleService {
         Article article = articleRepository.findById(id)
                 .orElseThrow(()-> new Team24Exception(ARTICLE_NOT_FOUND_ERROR));
 
-        if(!article.getMember().getId().equals(member.getId())){
+        if(!article.getMember().getId().equals(member.getId()) || !member.getRole().equals("ROLE_ADMIN")){
             throw new Team24Exception(ARTICLE_FORBIDDEN_ERROR);
         }
 
