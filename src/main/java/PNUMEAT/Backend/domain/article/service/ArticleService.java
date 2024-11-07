@@ -8,15 +8,17 @@ import PNUMEAT.Backend.domain.article.repository.ArticleRepository;
 import PNUMEAT.Backend.domain.auth.entity.User;
 import PNUMEAT.Backend.global.error.Team24Exception;
 import PNUMEAT.Backend.global.images.ImageService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import static PNUMEAT.Backend.global.error.ErrorCode.*;
 
 @Service
+@Slf4j
 public class ArticleService {
     private final ImageService imageService;
     private final ArticleRepository articleRepository;
@@ -61,8 +63,10 @@ public class ArticleService {
         Article article = articleRepository.findById(id)
                 .orElseThrow(()-> new Team24Exception(ARTICLE_NOT_FOUND_ERROR));
 
-        if(!article.getUser().getId().equals(member.getId()) || !member.getRole().equals("ROLE_ADMIN")){
-            throw new Team24Exception(ARTICLE_FORBIDDEN_ERROR);
+        if(!user.getRole().equals("ROLE_ADMIN")){
+            if(!article.getUser().getId().equals(user.getId())){
+                throw new Team24Exception(ARTICLE_FORBIDDEN_ERROR);
+            }
         }
 
         imageService.deleteImageByUrl(article.getImage());
@@ -76,8 +80,10 @@ public class ArticleService {
                 .orElseThrow(()-> new Team24Exception(ARTICLE_NOT_FOUND_ERROR));
 
 
-        if(!article.getUser().getId().equals(member.getId()) || !member.getRole().equals("ROLE_ADMIN")){
-            throw new Team24Exception(ARTICLE_FORBIDDEN_ERROR);
+        if(!user.getRole().equals("ROLE_ADMIN")){
+            if(!article.getUser().getId().equals(user.getId())){
+                throw new Team24Exception(ARTICLE_FORBIDDEN_ERROR);
+            }
         }
 
         String imageload = imageService.imageload(multipartFile, article.getArticleId());

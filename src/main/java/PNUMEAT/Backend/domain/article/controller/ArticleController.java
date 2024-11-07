@@ -59,7 +59,7 @@ public class ArticleController {
                                 HttpServletRequest request,
                                 @RequestParam("upload") MultipartFile multipartFile) {
         addAuthorizationHeaderInSession(request);
-        articleService.save(articleRequest, member, multipartFile);
+        articleService.save(articleRequest, user, multipartFile);
         return "redirect:/articles/";
     }
 
