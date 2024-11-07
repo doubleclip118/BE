@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Upload Test</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto p-8">
+        <h1 class="text-3xl font-bold mb-6">Image Upload Test Page</h1>
+
+        <div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+            <form id="uploadForm" action="#" method="post" enctype="multipart/form-data">
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="file">Upload Image:</label>
+                    <input type="file" id="file" name="upload" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                </div>
+                <div class="flex items-center justify-between">
+                    <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
+                        Upload
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div id="result" class="mt-6">
+            <!-- 타임리프를 통해 서버에서 데이터를 직접 받았을 때의 표시 부분 -->
+            <p th:if="${uploaded}" class="text-green-500 font-bold">Image uploaded successfully!</p>
+            <p th:if="${uploaded}">Image URL: <a th:href="${url}" target="_blank" class="text-blue-500 underline" th:text="${url}"></a></p>
+            <img th:if="${uploaded}" th:src="${url}" alt="Uploaded Image" class="mt-4" style="max-width: 300px;">
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('uploadForm').onsubmit = async (event) => {
+            event.preventDefault();
+            const fileInput = document.getElementById('file');
+            const file = fileInput.files[0];
+            if (!file) {
+                alert('Please select a file to upload.');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('upload', file);
+
+            try {
+                const response = await fetch('/api/image/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                const resultDiv = document.getElementById('result');
+
+                if (data.uploaded) {
+                    resultDiv.innerHTML = `
+                        <p class="text-green-500 font-bold">Image uploaded successfully!</p>
+                        <p>Image URL: <a href="${data.url}" target="_blank" class="text-blue-500 underline">${data.url}</a></p>
+                        <img src="${data.url}" alt="Uploaded Image" class="mt-4" style="max-width: 300px;">
+                    `;
+                } else {
+                    resultDiv.innerHTML = `<p class="text-red-500 font-bold">Image upload failed.</p>`;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('result').innerHTML = `<p class="text-red-500 font-bold">An error occurred during the upload.</p>`;
+            }
+        };
+    </script>
+</body>
+</html>
