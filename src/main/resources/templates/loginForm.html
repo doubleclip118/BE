@@ -6,18 +6,56 @@
     <title>Login Page</title>
     <!-- Bootstrap CSS CDN -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <style>
+        .container {
+            max-width: 400px;
+            margin-top: 100px;
+        }
+        h1 {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+        p.subtitle {
+            color: #888;
+            font-size: 14px;
+        }
+        .btn {
+            font-size: 16px;
+            font-weight: bold;
+            padding: 10px;
+        }
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 15px 0;
+        }
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid #ddd;
+        }
+        .divider:not(:empty)::before {
+            margin-right: .5em;
+        }
+        .divider:not(:empty)::after {
+            margin-left: .5em;
+        }
+    </style>
 </head>
 <body class="bg-light">
 
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-6 text-center">
-            <h1 class="my-5">Login Page</h1>
-            <hr>
-            <a href="/oauth2/authorization/naver" class="btn btn-primary btn-block my-3">Naver Login</a>
-            <a href="/oauth2/authorization/kakao" class="btn btn-warning btn-block my-3">Kakao Login</a>
-        </div>
-    </div>
+<div class="container text-center">
+    <h1 class="my-4">APPTIVE STUDY LOGIN</h1>
+    <p class="subtitle">오늘의 스터디를 회고해보자!</p>
+
+    <a href="/oauth2/authorization/kakao" class="btn btn-warning btn-block my-3">
+        <i class="fas fa-comment"></i> 카카오로 로그인하기
+    </a>
 </div>
 
 <!-- Bootstrap JS and dependencies (Popper.js and jQuery) -->
