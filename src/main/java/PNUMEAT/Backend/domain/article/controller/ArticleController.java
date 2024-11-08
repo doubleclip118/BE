@@ -1,6 +1,7 @@
 package PNUMEAT.Backend.domain.article.controller;
 
 import PNUMEAT.Backend.domain.article.dto.request.ArticleRequest;
+import PNUMEAT.Backend.domain.article.dto.response.ArticleResponse;
 import PNUMEAT.Backend.domain.article.entity.Article;
 import PNUMEAT.Backend.domain.article.enums.Category;
 import PNUMEAT.Backend.domain.article.service.ArticleService;
@@ -13,8 +14,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.springframework.web.multipart.MultipartFile;
 
 
@@ -31,7 +35,13 @@ public class ArticleController {
 
     @GetMapping
     public String getArticlesPage(Model model, HttpServletRequest request) {
-        model.addAttribute("articles", articleService.findAllArticles());
+        // 작성 시간 String으로 변환해서 DTO 생성, 타임리프가 LocalDateTime 인식 못함
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        List<ArticleResponse> articles = articleService.findAllArticles().stream()
+                .map(article -> ArticleResponse.of(article, article.getCreatedAt().format(formatter)))
+                .collect(Collectors.toList());
+
+        model.addAttribute("articles", articles);
         addAuthorizationHeaderInSession(request);
         return "article/list";
     }
@@ -89,7 +99,7 @@ public class ArticleController {
                                 @ModelAttribute ArticleRequest articleRequest,
                                 @LoginMember User user,
                                 HttpServletRequest request,
-                                @RequestParam("upload") MultipartFile multipartFile) {
+                                @RequestParam(value = "upload", required = false) MultipartFile multipartFile) {
         articleService.updateById(id, articleRequest, user, multipartFile);
         addAuthorizationHeaderInSession(request);
         return "redirect:/articles";
