@@ -4,39 +4,71 @@
     <meta charset="UTF-8">
     <title>Apptive Study</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .option-button {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .option-button:hover {
+            background-color: #e9f5f5;
+        }
+
+        .option-icon {
+            font-size: 1.5rem;
+            margin-right: 10px;
+        }
+
+        .selected {
+            background-color: #e0ffe0;
+            border-color: #28a745;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+    </style>
 </head>
 <body>
 <div class="container mt-5">
-    <h2 class="text-center mb-4">Apptive Study</h2> <!-- 제목 아래 간격 추가 -->
-    <div class="row">
-        <div class="col-md-3 mb-3">
-            <button type="button" class="btn btn-primary btn-block text-center" onclick="navigateToCategory('BACKEND')">백엔드</button>
-        </div>
-        <div class="col-md-3 mb-3">
-            <button type="button" class="btn btn-secondary btn-block text-center" onclick="navigateToCategory('FRONTEND')">프론트</button>
-        </div>
-        <div class="col-md-3 mb-3">
-            <button type="button" class="btn btn-success btn-block text-center" onclick="navigateToCategory('ANDROID')">안드로이드</button>
-        </div>
-        <div class="col-md-3 mb-3">
-            <button type="button" class="btn btn-info btn-block text-center" onclick="navigateToCategory('GAME')">게임</button>
-        </div>
+    <h2 class="text-center mb-4">Apptive Study</h2>
+    <div class="option-button" onclick="selectOption(this, 'BACKEND')">
+        <span class="option-icon">🛠️</span> 백엔드
+    </div>
+    <div class="option-button" onclick="selectOption(this, 'FRONTEND')">
+        <span class="option-icon">💻</span> 프론트엔드
+    </div>
+    <div class="option-button" onclick="selectOption(this, 'ANDROID')">
+        <span class="option-icon">📱</span> 안드로이드
+    </div>
+    <div class="option-button" onclick="selectOption(this, 'GAME')">
+        <span class="option-icon">🎮</span> 게임
     </div>
 </div>
 
 <script th:inline="javascript">
-    // JSON 형식으로 안전하게 authToken을 JavaScript 문자열 변수로 할당
     const authToken = [[${authToken}]]
-
-    // localStorage에 토큰 저장
     if (authToken) {
         localStorage.setItem('authToken', authToken);
     }
-</script>
 
-<script th:inline="javascript">
     function getAuthToken() {
         return localStorage.getItem('authToken');
+    }
+
+    function selectOption(element, category) {
+        document.querySelectorAll('.option-button').forEach(btn => btn.classList.remove('selected'));
+        element.classList.add('selected');
+        navigateToCategory(category);
     }
 
     function navigateToCategory(category) {
