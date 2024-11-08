@@ -75,7 +75,10 @@ public class ArticleController {
 
     @GetMapping("/category/{category}")
     public String getArticlesByCategory(@PathVariable Category category, Model model, HttpServletRequest request) {
-        List<Article> articles = articleService.findByCategory(category);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        List<ArticleResponse> articles = articleService.findByCategory(category).stream()
+                .map(article -> ArticleResponse.of(article, article.getCreatedAt().format(formatter)))
+                .collect(Collectors.toList());
 
         addAuthorizationHeaderInSession(request);
 
