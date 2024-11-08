@@ -79,14 +79,16 @@ public class ArticleService {
         Article article = articleRepository.findById(id)
                 .orElseThrow(()-> new Team24Exception(ARTICLE_NOT_FOUND_ERROR));
 
-
         if(!user.getRole().equals("ROLE_ADMIN")){
             if(!article.getUser().getId().equals(user.getId())){
                 throw new Team24Exception(ARTICLE_FORBIDDEN_ERROR);
             }
         }
 
-        String imageload = imageService.imageload(multipartFile, article.getArticleId());
+        String imageload = article.getImage();
+        if (multipartFile != null && !multipartFile.isEmpty()) {
+            imageload = imageService.imageload(multipartFile, article.getArticleId());
+        }
 
         article.updateArticle(articleRequest.title(), articleRequest.content(), articleRequest.category(), imageload);
     }
