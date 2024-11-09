@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Apptive Study</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
     <style>
         .option-button {
             display: flex;
@@ -53,6 +54,10 @@
     <div class="option-button" onclick="selectOption(this, 'GAME')">
         <span class="option-icon">🎮</span> 게임
     </div>
+
+    <a href="/oauth2/authorization/kakao" class="btn btn-warning btn-block my-3">
+        <i class="fas fa-comment"></i> 카카오로 로그인하기
+    </a>
 </div>
 
 <script th:inline="javascript">
