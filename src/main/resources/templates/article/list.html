@@ -4,20 +4,73 @@
     <meta charset="UTF-8">
     <title>게시물 목록</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .notice-board {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .board-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .board-header h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: #333;
+        }
+        .list-group-item {
+            background: #ffffff;
+            border: 1px solid #ddd;
+            margin-bottom: 5px;
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .list-group-item .item-content {
+            display: flex;
+            align-items: center;
+        }
+        .list-group-item .item-content span {
+            margin-right: 10px; /* ID와 제목 사이의 간격 */
+            font-weight: bold;
+        }
+        .list-group-item .metadata {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+        .btn-create {
+            border-radius: 20px;
+            padding: 0.5rem 1.5rem;
+        }
+    </style>
 </head>
-<body class="container mt-5">
+<body class="container mt-5 notice-board">
 
-<h1 class="mb-4" >게시물 목록</h1>
+<div class="board-header mb-4">
+    <h1><span th:text="${selectedCategory} "></span> 게시글 목록</h1>
+</div>
 
-<!-- 게시글 목록을 표시할 영역 -->
-<ul id="articleList" class="list-group mb-3">
+<ul id="articleList" class="list-group">
     <li class="list-group-item d-flex justify-content-between align-items-center" th:each="article : ${articles}">
-        <span th:text="'ID: ' + ${article.articleId}">ID</span>
-        <button th:onclick="'viewArticleWithAuth(' + ${article.articleId} + ')'" th:text="${article.title}">제목</button>
+        <div>
+            <span th:text="${article.articleId}">ID</span>
+            <button
+                    th:onclick="'viewArticleWithAuth(' + ${article.articleId} + ')'"
+                    th:text="${article.title}"
+                    style="background: none; border: none; color: black; font-size: 1rem; cursor: pointer; margin-left: auto; text-align: right;">
+            </button>
+        </div>
+        <div class="metadata">
+            <span th:text="${article.createdAt}"></span>
+        </div>
     </li>
 </ul>
 
-<button class="btn btn-success" onclick="createNewArticle()">새 글 작성</button>
+<button class="btn btn-success btn-create mt-3" onclick="createNewArticle()">새 글 작성</button>
 
 <script th:inline="javascript">
     function getAuthToken() {
@@ -51,7 +104,6 @@
             });
     }
 
-    // 새 게시글 작성 페이지로 이동
     function createNewArticle() {
         const token = getAuthToken();
         if (!token) {
