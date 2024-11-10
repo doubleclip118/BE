@@ -34,7 +34,7 @@
         <!-- Image Upload -->
         <div class="form-group">
             <label for="upload">이미지 업로드 (필수)</label>
-            <input type="file" id="upload" name="upload" class="form-control-file">
+            <input type="file" id="upload" name="upload" class="form-control-file" required>
         </div>
 
         <button type="button" class="btn btn-primary btn-block" onclick="postNewArticle()">작성</button>
@@ -56,6 +56,28 @@
             return;
         }
 
+        const title = document.getElementById('title').value.trim();
+        const content = document.getElementById('content').value.trim();
+        const category = document.getElementById('category').value;
+        const upload = document.getElementById('upload').files.length;
+
+        if (!title) {
+            alert('제목을 입력해 주세요.');
+            return;
+        }
+        if (!content) {
+            alert('내용을 입력해 주세요.');
+            return;
+        }
+        if (!category) {
+            alert('카테고리를 선택해 주세요.');
+            return;
+        }
+        if (upload === 0) {
+            alert('이미지를 업로드해 주세요.');
+            return;
+        }
+
         const form = document.getElementById('createArticleForm');
         const formData = new FormData(form);
 
@@ -66,18 +88,18 @@
             },
             body: formData
         })
-        .then(response => {
-            if (response.redirected) {
-                alert('게시글이 작성되었습니다.');
-                location.href = `/articles`;
-            } else {
-                alert('게시글 작성에 실패했습니다.');
-            }
-        })
-        .catch(error => {
-            console.error('네트워크 또는 서버 오류:', error);
-            alert('서버 오류로 인해 게시글 작성에 실패했습니다.');
-        });
+            .then(response => {
+                if (response.redirected) {
+                    alert('게시글이 작성되었습니다.');
+                    location.href = `/articles`;
+                } else {
+                    alert('게시글 작성에 실패했습니다.');
+                }
+            })
+            .catch(error => {
+                console.error('네트워크 또는 서버 오류:', error);
+                alert('서버 오류로 인해 게시글 작성에 실패했습니다.');
+            });
     }
 </script>
 </body>
