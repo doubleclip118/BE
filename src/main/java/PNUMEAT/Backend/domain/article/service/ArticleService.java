@@ -43,9 +43,14 @@ public class ArticleService {
     }
 
     @Transactional(readOnly = true)
-    public Article findById(Long id){
-        return articleRepository.findById(id)
+    public Article findById(Long id, User user){
+        Article article =  articleRepository.findById(id)
                 .orElseThrow(() -> new Team24Exception(ARTICLE_NOT_FOUND_ERROR));
+
+        if(!article.getUser().getId().equals(user.getId())){
+            throw new Team24Exception(ARTICLE_FORBIDDEN_ERROR);
+        }
+        return article;
     }
 
     @Transactional(readOnly = true)
