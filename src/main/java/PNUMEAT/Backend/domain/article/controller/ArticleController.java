@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.web.multipart.MultipartFile;
@@ -47,8 +46,8 @@ public class ArticleController {
     }
 
     @GetMapping("/{id}")
-    public String getArticleDetail(@PathVariable Long id, Model model, HttpServletRequest request) {
-        Article article = articleService.findById(id);
+    public String getArticleDetail(@PathVariable Long id, Model model, HttpServletRequest request, @LoginMember User user) {
+        Article article = articleService.findById(id, user);
         model.addAttribute("article", article);
         addAuthorizationHeaderInSession(request);
         return "article/detail";
@@ -70,11 +69,13 @@ public class ArticleController {
                                 @RequestParam("upload") MultipartFile multipartFile) {
         addAuthorizationHeaderInSession(request);
         articleService.save(articleRequest, user, multipartFile);
-        return "redirect:/articles/";
+        return "redirect:/article/list";
     }
 
     @GetMapping("/category/{category}")
-    public String getArticlesByCategory(@PathVariable Category category, Model model, HttpServletRequest request) {
+    public String getArticlesByCategory(@PathVariable Category category,
+                                        Model model,
+                                        HttpServletRequest request) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         List<ArticleResponse> articles = articleService.findByCategory(category).stream()
                 .map(article -> ArticleResponse.of(article, article.getCreatedAt().format(formatter)))
@@ -88,8 +89,9 @@ public class ArticleController {
     }
 
     @GetMapping("/{id}/edit")
-    public String getEditArticlePage(@PathVariable Long id, Model model, HttpServletRequest request) {
-        Article article = articleService.findById(id);
+    public String getEditArticlePage(@PathVariable Long id, Model model, HttpServletRequest request,
+                                     @LoginMember User user) {
+        Article article = articleService.findById(id, user);
         model.addAttribute("article", article);
         model.addAttribute("categories", Category.values());
 
