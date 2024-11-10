@@ -118,19 +118,13 @@ public class ArticleController {
         addAuthorizationHeaderInSession(request);
         return "redirect:/articles";
     }
-//
-//
-//
-//    @GetMapping
-//    public String getMainPage() {
-//        return "article/main";
-//    }
-//
-
 
     private void addAuthorizationHeaderInSession(HttpServletRequest request) {
         HttpSession session = request.getSession();
         session.setAttribute("authToken", request.getHeader("Authorization"));
     }
+
+
+
 
 }
