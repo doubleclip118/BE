@@ -22,7 +22,8 @@ public class ImageService {
     private String region; // 지역 정보를 별도로 유지
 
     // 로컬 경로 설정
-    private String localLocation = "/home/ubuntu/BE/image";
+    private String localLocation = "C:\\picture\\";
+//    private String localLocation = "/home/ubuntu/BE/image";
 
     public ImageService(S3Client s3Client) {
         this.s3Client = s3Client;

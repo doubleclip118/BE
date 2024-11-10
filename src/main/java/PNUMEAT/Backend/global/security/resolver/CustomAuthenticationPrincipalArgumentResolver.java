@@ -42,8 +42,6 @@ public class CustomAuthenticationPrincipalArgumentResolver implements HandlerMet
 
         User user = getMemberFromAuthentication(authentication);
 
-        log.info("member name = {}", user.getUsername());
-
         return user;
     }
 
