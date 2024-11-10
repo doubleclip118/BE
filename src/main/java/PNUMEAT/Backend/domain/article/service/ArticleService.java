@@ -47,8 +47,10 @@ public class ArticleService {
         Article article =  articleRepository.findById(id)
                 .orElseThrow(() -> new Team24Exception(ARTICLE_NOT_FOUND_ERROR));
 
-        if(!article.getUser().getId().equals(user.getId())){
-            throw new Team24Exception(ARTICLE_FORBIDDEN_ERROR);
+        if(!user.getRole().equals("ROLE_ADMIN")){
+            if(!article.getUser().getId().equals(user.getId())){
+                throw new Team24Exception(ARTICLE_FORBIDDEN_ERROR);
+            }
         }
         return article;
     }
