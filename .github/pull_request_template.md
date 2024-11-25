@@ -1,7 +1,4 @@
 Resolves #{이슈-번호}
-<!--
-e.g. Resolves #10, resolves #123
--->
 
 # ❓ 해결하려는 문제가 무엇인가요?
 
