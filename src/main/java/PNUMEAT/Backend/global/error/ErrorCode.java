@@ -18,6 +18,9 @@ public enum ErrorCode {
 
     // ARTICLE
     ARTICLE_NOT_FOUND_ERROR(HttpStatus.NOT_FOUND, "존재 하지 않는 게시글 입니다."),
+    IMAGE_FILE_UPLOAD_ERROR(HttpStatus.BAD_REQUEST,"이미지 파일 업로드 에러발생."),
+    IMAGE_FILE_DELETE_ERROR(HttpStatus.BAD_REQUEST,"이미지 파일 삭제 에러발생."),
+    S3_NETWORK_ERROR(HttpStatus.BAD_REQUEST,"S3 연결 에러 발생"),
 
     //HISTORY
     HISTORY_NOT_FOUND_ERROR(HttpStatus.NOT_FOUND, "존재 하지 않는 히스토리 입니다."),
