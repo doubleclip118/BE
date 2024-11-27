@@ -21,10 +21,6 @@ public class ImageService {
     public String imageload(MultipartFile multipartFile, Long id) {
         String s3Url;
         try {
-            if (multipartFile == null || multipartFile.isEmpty()) {
-                throw new IllegalArgumentException("업로드할 파일이 없습니다.");
-            }
-
             String localLocation = "/Users/pakjeongwoo/4-2/pnu_meat/BE/";
             Image image = new Image(multipartFile, id, localLocation);
             s3Url = image.uploadToS3(s3Client, awsProperties.getBucket(), awsProperties.getRegion());
