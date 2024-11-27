@@ -8,6 +8,7 @@ import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+
 @Getter
 public class Image {
     private final String originalFileName;
@@ -16,17 +17,31 @@ public class Image {
     private final File localFile;
 
     public Image(MultipartFile multipartFile, Long id, String localLocation) {
-        this.originalFileName = multipartFile.getOriginalFilename();
-        String ext = extractExtension(originalFileName);
-        this.uniqueFileName = id + ext;
-        this.localPath = localLocation + uniqueFileName;
-        this.localFile = new File(localPath);
+        if (multipartFile == null || multipartFile.isEmpty()) {
+            String defaultImageFilePath = "/Users/pakjeongwoo/4-2/pnu_meat/BE/default-image.jpg";
+            File defaultImageFile = new File(defaultImageFilePath);
 
-        try {
-            multipartFile.transferTo(localFile);
-        } catch (IOException e) {
-            System.err.println("파일 저장 중 오류 발생: " + e.getMessage());
-            throw new RuntimeException("파일 저장 중 오류가 발생했습니다.", e);
+            if (!defaultImageFile.exists()) {
+                throw new RuntimeException("기본 이미지 파일이 존재하지 않습니다: " + defaultImageFilePath);
+            }
+
+            this.originalFileName = defaultImageFile.getName();
+            this.uniqueFileName = "default-image-" + id + ".jpg";
+            this.localPath = defaultImageFilePath;
+            this.localFile = defaultImageFile;
+        } else {
+            this.originalFileName = multipartFile.getOriginalFilename();
+            String ext = extractExtension(originalFileName);
+            this.uniqueFileName = id + ext;
+            this.localPath = localLocation + uniqueFileName;
+            this.localFile = new File(localPath);
+
+            try {
+                multipartFile.transferTo(localFile);
+            } catch (IOException e) {
+                System.err.println("파일 저장 중 오류 발생: " + e.getMessage());
+                throw new RuntimeException("파일 저장 중 오류가 발생했습니다.", e);
+            }
         }
     }
 
