@@ -1,33 +1,33 @@
 package PNUMEAT.Backend.global.images;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.beans.factory.annotation.Autowired;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 
 @Configuration
 public class S3Config {
 
-    @Value("${cloud.aws.credentials.access-key}")
-    private String accessKey;
+    private final AwsProperties awsProperties;
 
-    @Value("${cloud.aws.credentials.secret-key}")
-    private String secretKey;
-
-    @Value("${cloud.aws.region.static}")
-    private String region;
+    @Autowired
+    public S3Config(AwsProperties awsProperties) {
+        this.awsProperties = awsProperties;
+    }
 
     @Bean
     public S3Client s3Client() {
         return S3Client.builder()
-            .region(Region.of(region))
+            .region(Region.of(awsProperties.getRegion()))
             .credentialsProvider(
                 StaticCredentialsProvider.create(
-                    AwsBasicCredentials.create(accessKey, secretKey)
+                    AwsBasicCredentials.create(
+                        awsProperties.getAccessKey(),
+                        awsProperties.getSecretKey()
+                    )
                 )
             )
             .build();
