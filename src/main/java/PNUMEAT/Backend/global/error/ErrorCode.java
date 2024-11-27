@@ -34,7 +34,12 @@ public enum ErrorCode {
     CATEGORY_NOT_FOUND_ERROR(HttpStatus.NOT_FOUND, "존재하지 않는 카테고리 입니다."),
 
     //PARTICIPANT
-    PARTICIPANT_LIMIT_ERROR(HttpStatus.BAD_REQUEST, "최대 참가자 수에 도달했습니다.");
+    PARTICIPANT_LIMIT_ERROR(HttpStatus.BAD_REQUEST, "최대 참가자 수에 도달했습니다."),
+
+    //IMAGE
+    IMAGE_FILE_UPLOAD_ERROR(HttpStatus.BAD_REQUEST,"이미지 파일 업로드 에러발생."),
+    IMAGE_FILE_DELETE_ERROR(HttpStatus.BAD_REQUEST,"이미지 파일 삭제 에러발생."),
+    S3_NETWORK_ERROR(HttpStatus.BAD_REQUEST,"S3 연결 에러 발생");
 
     private final HttpStatus status;
     private final String message;
