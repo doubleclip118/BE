@@ -45,6 +45,8 @@ dependencies {
 	implementation platform('software.amazon.awssdk:bom:2.20.137') // AWS SDK v2 BOM을 추가하여 모든 모듈의 버전 일관성 보장
 	implementation 'software.amazon.awssdk:s3'
 	implementation 'software.amazon.awssdk:sts'
+	testImplementation 'org.junit.jupiter:junit-jupiter:5.7.1'
+
 
 	// Spring Cloud AWS 관련 의존성
 	implementation 'io.awspring.cloud:spring-cloud-starter-aws:2.4.4'
