@@ -2,7 +2,7 @@ package PNUMEAT.Backend.domain.article.entity;
 
 
 import PNUMEAT.Backend.domain.article.enums.Category;
-import PNUMEAT.Backend.domain.auth.entity.User;
+import PNUMEAT.Backend.domain.auth.entity.Member;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,8 +22,8 @@ public class Article {
     private String title;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
 
     private String content;
     @Enumerated(EnumType.STRING)
@@ -45,14 +45,14 @@ public class Article {
         this.image = image;
     }
 
-    public void insertimgUrl(String image){
+    public void insertimgUrl(String image) {
         this.image = image;
     }
 
     @Builder
-    public Article(String title, User user, String content, Category category, String image, boolean deleted) {
+    public Article(String title, Member member, String content, Category category, String image, boolean deleted) {
         this.title = title;
-        this.user = user;
+        this.member = member;
         this.content = content;
         this.category = category;
         this.image = image;

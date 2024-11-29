@@ -4,7 +4,7 @@ import static PNUMEAT.Backend.domain.auth.constant.AuthConstant.ACCESS_TOKEN;
 import static PNUMEAT.Backend.domain.auth.constant.AuthConstant.REFRESH_TOKEN;
 
 import PNUMEAT.Backend.domain.auth.entity.RefreshToken;
-import PNUMEAT.Backend.domain.auth.repository.UserRepository;
+import PNUMEAT.Backend.domain.auth.repository.MemberRepository;
 import PNUMEAT.Backend.domain.auth.service.RefreshTokenService;
 import PNUMEAT.Backend.global.security.utils.jwt.JWTUtils;
 import PNUMEAT.Backend.global.security.utils.servletUtils.cookie.CookieUtils;
@@ -31,7 +31,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
     private final JWTUtils jwtUtil;
     private final RefreshTokenService refreshTokenService;
-    private final UserRepository userRepository;
+    private final MemberRepository memberRepository;
     private final ObjectMapper objectMapper;
 
     @Override
@@ -46,7 +46,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
 //        Optional<Member> findMember = memberRepository.findByUuid(uuid);
 
-        Optional<RefreshToken> findRefreshToken = refreshTokenService.findRefreshToken(customUserDetails.getUser().getId());
+        Optional<RefreshToken> findRefreshToken = refreshTokenService.findRefreshToken(customUserDetails.getMember().getId());
 
         String refreshToken = null;
 
@@ -63,6 +63,12 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         log.info("Refresh = {}", refreshToken);
 
         setInformationInResponse(response, accessToken, refreshToken);
+
+        if(customUserDetails.getMemberName() == null){
+            response.sendRedirect("https://codemonster.site/enroll");
+        }else{
+            response.sendRedirect("https://codemonster.site/");
+        }
     }
 
     private void setInformationInResponse(HttpServletResponse response, String accessToken, String refreshToken) throws IOException {
@@ -71,8 +77,6 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         response.addCookie(access);
         response.addCookie(refresh);
-
-        response.sendRedirect("/");
     }
 
     private String getRole(Authentication authentication) {

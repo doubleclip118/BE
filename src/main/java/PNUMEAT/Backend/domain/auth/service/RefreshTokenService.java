@@ -1,8 +1,8 @@
 package PNUMEAT.Backend.domain.auth.service;
 
-import PNUMEAT.Backend.domain.auth.entity.User;
+import PNUMEAT.Backend.domain.auth.entity.Member;
 import PNUMEAT.Backend.domain.auth.entity.RefreshToken;
-import PNUMEAT.Backend.domain.auth.repository.UserRepository;
+import PNUMEAT.Backend.domain.auth.repository.MemberRepository;
 import PNUMEAT.Backend.domain.auth.repository.RefreshTokenRepository;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.Date;
@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class RefreshTokenService {
 
     private final RefreshTokenRepository refreshTokenRepository;
-    private final UserRepository userRepository;
+    private final MemberRepository memberRepository;
 
     @Transactional
     public RefreshToken renewalRefreshToken(String previousToken, String newToken, Long expiredMs) {
@@ -33,12 +33,12 @@ public class RefreshTokenService {
 
     @Transactional
     public RefreshToken addRefreshEntity(String refresh, String uuid, Long expiredMs) {
-        User user = userRepository.findByUuid(uuid)
+        Member member = memberRepository.findByUuid(uuid)
                 .orElseThrow(() -> new EntityNotFoundException(uuid + "의 회원이 없습니다."));
 
         Date date = new Date(System.currentTimeMillis() + expiredMs);
 
-        RefreshToken refreshToken = new RefreshToken(user, refresh, date.toString());
+        RefreshToken refreshToken = new RefreshToken(member, refresh, date.toString());
 
         refreshTokenRepository.save(refreshToken);
 
@@ -46,7 +46,7 @@ public class RefreshTokenService {
     }
 
     public Optional<RefreshToken> findRefreshToken(Long memberId) {
-        return refreshTokenRepository.findRefreshTokenByUserId(memberId);
+        return refreshTokenRepository.findRefreshTokenByMemberId(memberId);
     }
 
 }
