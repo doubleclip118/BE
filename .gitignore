@@ -25,6 +25,7 @@ bin/
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
+.DS_Store
 
 ### NetBeans ###
 /nbproject/private/
@@ -37,3 +38,5 @@ out/
 .vscode/
 
 application-secret.properties
+.DS_Store
+.idea/workspace.xml
