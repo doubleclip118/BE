@@ -1,6 +1,6 @@
 package PNUMEAT.Backend.global.security.oauth;
 
-import PNUMEAT.Backend.domain.auth.entity.User;
+import PNUMEAT.Backend.domain.auth.entity.Member;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
@@ -13,7 +13,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 @Getter
 public class OAuth2UserImpl implements OAuth2User {
 
-    private final User user;
+    private final Member member;
 
     @Override
     public Map<String, Object> getAttributes() {
@@ -29,7 +29,7 @@ public class OAuth2UserImpl implements OAuth2User {
             @Override
             public String getAuthority() {
 
-                return user.getRole();
+                return member.getRole();
             }
         });
 
@@ -38,10 +38,14 @@ public class OAuth2UserImpl implements OAuth2User {
 
     @Override
     public String getName() {
-        return user.getUsername();
+        return member.getMemberUniqueId();
+    }
+
+    public String getMemberName(){
+        return member.getMemberName();
     }
 
     public String getUUID() {
-        return user.getUuid();
+        return member.getUuid();
     }
 }

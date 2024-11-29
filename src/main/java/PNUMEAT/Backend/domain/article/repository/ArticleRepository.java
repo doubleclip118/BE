@@ -11,6 +11,6 @@ import java.util.Optional;
 @Repository
 public interface ArticleRepository extends JpaRepository<Article, Long> {
     Optional<Article> findByArticleId(Long articleId);
-    List<Article> findByUserId(Long userId);
+    List<Article> findByMemberId(Long memberId);
     List<Article> findByCategory(Category category);
 }

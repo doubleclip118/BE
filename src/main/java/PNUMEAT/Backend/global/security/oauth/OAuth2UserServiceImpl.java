@@ -3,8 +3,8 @@ package PNUMEAT.Backend.global.security.oauth;
 import static PNUMEAT.Backend.domain.auth.constant.AuthConstant.KAKAO;
 import static PNUMEAT.Backend.domain.auth.constant.AuthConstant.NAVER;
 
-import PNUMEAT.Backend.domain.auth.entity.User;
-import PNUMEAT.Backend.domain.auth.repository.UserRepository;
+import PNUMEAT.Backend.domain.auth.entity.Member;
+import PNUMEAT.Backend.domain.auth.repository.MemberRepository;
 import PNUMEAT.Backend.global.security.oauth.oauthResponse.KakaoResponse;
 import PNUMEAT.Backend.global.security.oauth.oauthResponse.NaverResponse;
 import PNUMEAT.Backend.global.security.oauth.oauthResponse.OAuth2Response;
@@ -22,7 +22,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class OAuth2UserServiceImpl extends DefaultOAuth2UserService {
 
-    private final UserRepository userRepository;
+    private final MemberRepository memberRepository;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -33,6 +33,8 @@ public class OAuth2UserServiceImpl extends DefaultOAuth2UserService {
 
         OAuth2Response oAuth2Response = null;
 
+        log.info("???");
+
         if (registrationId.equals(NAVER)) {
             oAuth2Response = new NaverResponse(oAuth2User.getAttributes());
         } else if (registrationId.equals(KAKAO)) {
@@ -41,20 +43,22 @@ public class OAuth2UserServiceImpl extends DefaultOAuth2UserService {
             return null;
         }
 
-        String username = oAuth2Response.getProvider() + " " + oAuth2Response.getProviderId();
+        String memberUniqueId = oAuth2Response.getProvider() + " " + oAuth2Response.getProviderId();
 
-        Optional<User> memberOptional = userRepository.findByUsername(username);
+        log.info("memberUniqueId = {}",memberUniqueId);
+
+        Optional<Member> memberOptional = memberRepository.findByMemberUniqueId(memberUniqueId);
 
         if (memberOptional.isPresent()) {
-            User user = memberOptional.get();
+            Member member = memberOptional.get();
 
-            return new OAuth2UserImpl(user);
+            return new OAuth2UserImpl(member);
         }
 
-        User user = new User(oAuth2Response.getEmail(), username, "ROLE_USER");
+        Member member = new Member(oAuth2Response.getEmail(), memberUniqueId, "ROLE_USER");
 
-        userRepository.save(user);
+        memberRepository.save(member);
 
-        return new OAuth2UserImpl(user);
+        return new OAuth2UserImpl(member);
     }
 }
