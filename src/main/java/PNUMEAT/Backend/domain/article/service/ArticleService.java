@@ -5,7 +5,7 @@ import PNUMEAT.Backend.domain.article.dto.request.ArticleRequest;
 import PNUMEAT.Backend.domain.article.entity.Article;
 import PNUMEAT.Backend.domain.article.enums.Category;
 import PNUMEAT.Backend.domain.article.repository.ArticleRepository;
-import PNUMEAT.Backend.domain.auth.entity.User;
+import PNUMEAT.Backend.domain.auth.entity.Member;
 import PNUMEAT.Backend.global.error.Team24Exception;
 import PNUMEAT.Backend.global.images.ImageService;
 import lombok.extern.slf4j.Slf4j;
@@ -29,9 +29,9 @@ public class ArticleService {
     }
 
     @Transactional
-    public Article save(ArticleRequest articleRequest, User user, MultipartFile multipartFile){
+    public Article save(ArticleRequest articleRequest, Member member, MultipartFile multipartFile){
 
-        Article article = toEntity(articleRequest, user,null);
+        Article article = toEntity(articleRequest, member,null);
 
         Article savedArticle = articleRepository.save(article);
 
@@ -43,12 +43,12 @@ public class ArticleService {
     }
 
     @Transactional(readOnly = true)
-    public Article findById(Long id, User user){
+    public Article findById(Long id, Member member){
         Article article =  articleRepository.findById(id)
                 .orElseThrow(() -> new Team24Exception(ARTICLE_NOT_FOUND_ERROR));
 
-        if(!user.getRole().equals("ROLE_ADMIN")){
-            if(!article.getUser().getId().equals(user.getId())){
+        if(!member.getRole().equals("ROLE_ADMIN")){
+            if(!article.getMember().getId().equals(member.getId())){
                 throw new Team24Exception(ARTICLE_FORBIDDEN_ERROR);
             }
         }
@@ -62,16 +62,16 @@ public class ArticleService {
 
     @Transactional(readOnly = true)
     public List<Article> findByMemberId(Long memberId){
-        return articleRepository.findByUserId(memberId);
+        return articleRepository.findByMemberId(memberId);
     }
 
     @Transactional
-    public void deleteById(Long id, User user){
+    public void deleteById(Long id, Member member){
         Article article = articleRepository.findById(id)
                 .orElseThrow(()-> new Team24Exception(ARTICLE_NOT_FOUND_ERROR));
 
-        if(!user.getRole().equals("ROLE_ADMIN")){
-            if(!article.getUser().getId().equals(user.getId())){
+        if(!member.getRole().equals("ROLE_ADMIN")){
+            if(!article.getMember().getId().equals(member.getId())){
                 throw new Team24Exception(ARTICLE_FORBIDDEN_ERROR);
             }
         }
@@ -82,12 +82,12 @@ public class ArticleService {
     }
 
     @Transactional
-    public void updateById(Long id, ArticleRequest articleRequest, User user, MultipartFile multipartFile){
+    public void updateById(Long id, ArticleRequest articleRequest, Member member, MultipartFile multipartFile){
         Article article = articleRepository.findById(id)
                 .orElseThrow(()-> new Team24Exception(ARTICLE_NOT_FOUND_ERROR));
 
-        if(!user.getRole().equals("ROLE_ADMIN")){
-            if(!article.getUser().getId().equals(user.getId())){
+        if(!member.getRole().equals("ROLE_ADMIN")){
+            if(!article.getMember().getId().equals(member.getId())){
                 throw new Team24Exception(ARTICLE_FORBIDDEN_ERROR);
             }
         }
@@ -106,9 +106,9 @@ public class ArticleService {
     }
 
 
-    public Article toEntity(ArticleRequest articleRequest, User user, String imgUrl) {
+    public Article toEntity(ArticleRequest articleRequest, Member member, String imgUrl) {
         return Article.builder()
-                .user(user)
+                .member(member)
                 .title(articleRequest.title())
                 .content(articleRequest.content())
                 .category(articleRequest.category())

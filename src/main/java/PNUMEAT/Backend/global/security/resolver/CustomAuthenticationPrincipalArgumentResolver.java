@@ -1,7 +1,7 @@
 package PNUMEAT.Backend.global.security.resolver;
 
-import PNUMEAT.Backend.domain.auth.entity.User;
-import PNUMEAT.Backend.domain.auth.repository.UserRepository;
+import PNUMEAT.Backend.domain.auth.entity.Member;
+import PNUMEAT.Backend.domain.auth.repository.MemberRepository;
 import PNUMEAT.Backend.global.security.annotation.LoginMember;
 import PNUMEAT.Backend.global.security.utils.jwt.JWTUtils;
 import lombok.AllArgsConstructor;
@@ -23,7 +23,7 @@ public class CustomAuthenticationPrincipalArgumentResolver implements HandlerMet
 
     private final JWTUtils jwtUtils;
 
-    private final UserRepository userRepository;
+    private final MemberRepository memberRepository;
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
@@ -40,18 +40,18 @@ public class CustomAuthenticationPrincipalArgumentResolver implements HandlerMet
             return null;
         }
 
-        User user = getMemberFromAuthentication(authentication);
+        Member member = getMemberFromAuthentication(authentication);
 
-        return user;
+        return member;
     }
 
-    private User getMemberFromAuthentication(Authentication authentication) {
+    private Member getMemberFromAuthentication(Authentication authentication) {
         // jwt token 추출
         String token = (String) authentication.getPrincipal();
 
         String uuid = jwtUtils.getUUID(token);
 
-        return userRepository.findByUuid(uuid).orElseThrow();
+        return memberRepository.findByUuid(uuid).orElseThrow();
     }
 
     private boolean isAuthenticationMember(Authentication authentication) {

@@ -15,8 +15,7 @@ import lombok.Getter;
 
 @Entity
 @Getter
-@Table(name = "`user`")
-public class User {
+public class Member {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,21 +23,27 @@ public class User {
 
     private String email;
 
-    private String username;
+    private String memberUniqueId;
 
     private String uuid;
 
     private String role;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private String memberName;
+
+    private String imageUrl;
+
+    private String description;
+
+    @OneToMany(mappedBy = "member")
     private List<Article> articles = new ArrayList<>();
 
-    protected User() {
+    protected Member() {
     }
 
-    public User(String email, String username, String role) {
+    public Member(String email, String memberUniqueId, String role) {
         this.email = email;
-        this.username = username;
+        this.memberUniqueId = memberUniqueId;
         this.role = role;
         this.uuid = UUID.randomUUID().toString();
     }
