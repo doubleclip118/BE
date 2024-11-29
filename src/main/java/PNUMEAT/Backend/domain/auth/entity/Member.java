@@ -1,6 +1,8 @@
 package PNUMEAT.Backend.domain.auth.entity;
 
 
+import static PNUMEAT.Backend.global.images.ImageConstant.DEFAULT_MEMBER_PROFILE_URL;
+
 import PNUMEAT.Backend.domain.article.entity.Article;
 import jakarta.persistence.*;
 
@@ -31,7 +33,7 @@ public class Member {
 
     private String memberName;
 
-    private String imageUrl;
+    private String imageUrl = DEFAULT_MEMBER_PROFILE_URL;
 
     private String description;
 
@@ -46,5 +48,14 @@ public class Member {
         this.memberUniqueId = memberUniqueId;
         this.role = role;
         this.uuid = UUID.randomUUID().toString();
+    }
+
+    public void updateProfile(String memberName, String description){
+        this.memberName = memberName;
+        this.description = description;
+    }
+
+    public void updateImageUrl(String imageUrl){
+        this.imageUrl = imageUrl;
     }
 }

@@ -28,6 +28,10 @@ public class ApiResponse<T> {
         return new ApiResponse<>(SUCCESS, HttpStatus.CREATED.value(), null, data);
     }
 
+    public static <T> ApiResponse<?> createResponseWithMessage(String message){
+        return new ApiResponse<>(SUCCESS, HttpStatus.CREATED.value(), message, null);
+    }
+
     public static ApiResponse<?> validationErrorResponse(ErrorValidationResult e){
         return new ApiResponse<>(FAIL, ErrorValidationResult.ERROR_STATUS_CODE, ErrorValidationResult.ERROR_MESSAGE, e.getValidation());
     }
