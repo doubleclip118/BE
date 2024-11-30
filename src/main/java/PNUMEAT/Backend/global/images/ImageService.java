@@ -16,17 +16,19 @@ public class ImageService {
     private final AwsProperties awsProperties;
 
     private static final String LOCAL_LOCATION = "/Users/pakjeongwoo/Downloads/";
+    private static final String PROFILE_FOLDER = "profile";
+    private static final String TEAM_FOLDER = "team";
     public ImageService(S3Client s3Client, AwsProperties awsProperties) {
         this.s3Client = s3Client;
         this.awsProperties = awsProperties;
     }
 
-    public String imageUpload(MultipartFile multipartFile) {
+    public String profileImageUpload(MultipartFile multipartFile) {
         String s3Url;
         try {
             String uuid = UUID.randomUUID().toString();
             Image image = new Image(multipartFile, uuid, LOCAL_LOCATION);
-            s3Url = image.uploadToS3(s3Client, awsProperties.getBucket(), awsProperties.getRegion());
+            s3Url = image.uploadToS3(s3Client, awsProperties.getBucket(), awsProperties.getRegion(),PROFILE_FOLDER);
 
             if (!image.deleteLocalFile()) {
                 log.error("로컬 파일 삭제 실패: {}", image.getLocalPath());
@@ -39,12 +41,48 @@ public class ImageService {
         return s3Url;
     }
 
-    public String imageUpdate(MultipartFile multipartFile, String imageUrl) {
+    public String profileImageUpdate(MultipartFile multipartFile, String imageUrl) {
         String updatedS3Url;
         try {
             String key = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
             Image image = new Image(multipartFile, key, LOCAL_LOCATION);
-            updatedS3Url = image.uploadToS3(s3Client, awsProperties.getBucket(), awsProperties.getRegion());
+            updatedS3Url = image.uploadToS3(s3Client, awsProperties.getBucket(), awsProperties.getRegion(),PROFILE_FOLDER);
+
+            if (!image.deleteLocalFile()) {
+                log.error("로컬 파일 삭제 실패: {}", image.getLocalPath());
+            }
+        } catch (Exception e) {
+            log.error("이미지 업데이트 중 오류 발생: {}", e.getMessage());
+            throw new ImageFileUploadException();
+        }
+
+        return updatedS3Url;
+    }
+
+    public String teamImageUpload(MultipartFile multipartFile) {
+        String s3Url;
+        try {
+            String uuid = UUID.randomUUID().toString();
+            Image image = new Image(multipartFile, uuid, LOCAL_LOCATION);
+            s3Url = image.uploadToS3(s3Client, awsProperties.getBucket(), awsProperties.getRegion(),TEAM_FOLDER);
+
+            if (!image.deleteLocalFile()) {
+                log.error("로컬 파일 삭제 실패: {}", image.getLocalPath());
+            }
+        } catch (Exception e) {
+            log.error("파일 처리 중 오류 발생: {}", e.getMessage());
+            throw new ImageFileUploadException();
+        }
+
+        return s3Url;
+    }
+
+    public String teamImageUpdate(MultipartFile multipartFile, String imageUrl) {
+        String updatedS3Url;
+        try {
+            String key = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
+            Image image = new Image(multipartFile, key, LOCAL_LOCATION);
+            updatedS3Url = image.uploadToS3(s3Client, awsProperties.getBucket(), awsProperties.getRegion(),TEAM_FOLDER);
 
             if (!image.deleteLocalFile()) {
                 log.error("로컬 파일 삭제 실패: {}", image.getLocalPath());
