@@ -39,7 +39,7 @@ class MemberServiceTest {
         Member memberWithProfile = memberService.createMemberProfile(memberProfileRequest, image, member);
 
         //then
-        assertThat(memberWithProfile.getImageUrl()).isEqualTo(ImageConstant.DEFAULT_MEMBER_PROFILE_URL);
+        assertThat(memberWithProfile.getImageUrl()).isEqualTo(ImageConstant.DEFAULT_MEMBER_PROFILE_IMAGE_URL);
         assertThat(memberWithProfile.getMemberName()).isEqualTo(memberProfileRequest.memberName());
         assertThat(memberWithProfile.getDescription()).isEqualTo(memberProfileRequest.memberExplain());
     }

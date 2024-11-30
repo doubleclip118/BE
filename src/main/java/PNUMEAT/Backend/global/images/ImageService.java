@@ -1,5 +1,7 @@
 package PNUMEAT.Backend.global.images;
 
+import static PNUMEAT.Backend.global.images.ImageConstant.*;
+
 import PNUMEAT.Backend.global.error.images.ImageFileDeleteException;
 import PNUMEAT.Backend.global.error.images.ImageFileUploadException;
 import java.util.UUID;
@@ -14,10 +16,6 @@ import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 public class ImageService {
     private final S3Client s3Client;
     private final AwsProperties awsProperties;
-
-    private static final String LOCAL_LOCATION = "/Users/pakjeongwoo/Downloads/";
-    private static final String PROFILE_FOLDER = "profile";
-    private static final String TEAM_FOLDER = "team";
     public ImageService(S3Client s3Client, AwsProperties awsProperties) {
         this.s3Client = s3Client;
         this.awsProperties = awsProperties;
