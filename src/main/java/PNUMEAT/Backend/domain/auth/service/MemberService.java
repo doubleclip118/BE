@@ -21,7 +21,7 @@ public class MemberService {
         member.updateProfile(memberProfileRequest.memberName(),memberProfileRequest.memberExplain());
 
         if (image != null){
-            String imageUrl = imageService.imageUpload(image);
+            String imageUrl = imageService.profileImageUpload(image);
             member.updateImageUrl(imageUrl);
         }
 

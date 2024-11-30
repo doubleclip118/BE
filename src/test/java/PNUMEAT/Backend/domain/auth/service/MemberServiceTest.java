@@ -54,7 +54,7 @@ class MemberServiceTest {
                 MediaType.IMAGE_PNG_VALUE,
                 "TEST".getBytes());
         Member member = new Member("TEST", "TEST", "ROLE_USER");
-        given(imageService.imageUpload(image)).willReturn("s3://");
+        given(imageService.profileImageUpload(image)).willReturn("s3://");
 
         //when
         Member memberWithProfile = memberService.createMemberProfile(memberProfileRequest, image, member);
