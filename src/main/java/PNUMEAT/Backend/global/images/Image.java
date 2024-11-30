@@ -40,17 +40,20 @@ public class Image {
         return "";
     }
 
-    public String uploadToS3(S3Client s3Client, String bucket, String region) {
+    public String uploadToS3(S3Client s3Client, String bucket, String region, String folder) {
+        String s3Key = folder + "/" + this.uniqueFileName;
+
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
             .bucket(bucket)
-            .key(this.uniqueFileName)
+            .key(s3Key)
             .acl(ObjectCannedACL.PUBLIC_READ)
             .build();
 
         s3Client.putObject(putObjectRequest, RequestBody.fromFile(this.localFile));
 
-        return String.format("https://%s.s3.%s.amazonaws.com/%s", bucket, region, this.uniqueFileName);
+        return String.format("https://%s.s3.%s.amazonaws.com/%s", bucket, region, s3Key);
     }
+
 
     public boolean deleteLocalFile() {
         return localFile.delete();
