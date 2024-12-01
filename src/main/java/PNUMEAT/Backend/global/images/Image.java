@@ -1,5 +1,7 @@
 package PNUMEAT.Backend.global.images;
 
+import static PNUMEAT.Backend.global.images.ImageConstant.AWS_PATH;
+
 import java.io.File;
 import java.io.IOException;
 import lombok.Getter;
@@ -51,7 +53,7 @@ public class Image {
 
         s3Client.putObject(putObjectRequest, RequestBody.fromFile(this.localFile));
 
-        return String.format("https://%s.s3.%s.amazonaws.com/%s", bucket, region, s3Key);
+        return String.format(AWS_PATH, bucket, region, s3Key);
     }
 
 
