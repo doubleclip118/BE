@@ -16,6 +16,9 @@ public enum ErrorCode {
 
     ARTICLE_FORBIDDEN_ERROR(HttpStatus.FORBIDDEN, "게시글 권한이 없습니다."),
 
+    //TEAM
+    TOPIC_INVALID_ERROR(HttpStatus.BAD_REQUEST, "주제가 올바른 형식이 아닙니다."),
+
     // ARTICLE
     ARTICLE_NOT_FOUND_ERROR(HttpStatus.NOT_FOUND, "존재 하지 않는 게시글 입니다."),
 
