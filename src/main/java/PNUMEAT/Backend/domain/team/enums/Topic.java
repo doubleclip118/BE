@@ -1,6 +1,7 @@
 package PNUMEAT.Backend.domain.team.enums;
 
 import PNUMEAT.Backend.global.error.ComonException;
+import java.util.Arrays;
 
 import static PNUMEAT.Backend.global.error.ErrorCode.TOPIC_INVALID_ERROR;
 
@@ -25,11 +26,9 @@ public enum Topic {
     }
 
     public static Topic fromName(String name){
-        for(Topic topic : Topic.values()){
-            if(topic.getName().equals(name)){
-                return topic;
-            }
-        }
-        throw new ComonException(TOPIC_INVALID_ERROR);
+        return Arrays.stream(Topic.values())
+                .filter(topic -> topic.getName().equals(name))
+                .findFirst()
+                .orElseThrow(() -> new ComonException(TOPIC_INVALID_ERROR));
     }
 }

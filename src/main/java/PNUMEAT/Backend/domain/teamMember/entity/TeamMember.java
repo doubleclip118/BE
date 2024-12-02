@@ -1,4 +1,4 @@
-package PNUMEAT.Backend.domain.team_member.entity;
+package PNUMEAT.Backend.domain.teamMember.entity;
 
 import PNUMEAT.Backend.domain.auth.entity.Member;
 import PNUMEAT.Backend.domain.team.entity.Team;
