@@ -6,6 +6,7 @@ import PNUMEAT.Backend.domain.team_member.entity.TeamMember;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
+import org.hibernate.annotations.Fetch;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -44,7 +45,7 @@ public class Team {
     @JoinColumn(name = "member_id")
     private Member teamManager;
 
-    @OneToMany(mappedBy = "team")
+    @OneToMany(mappedBy = "team", fetch = FetchType.LAZY)
     private List<TeamMember> teamMembers = new ArrayList<>();
 
     protected Team(){
