@@ -27,9 +27,9 @@ public class TeamController {
 
     @PostMapping
     public ResponseEntity<ApiResponse<?>> createTeam(@ModelAttribute @Valid TeamRequest teamRequest,
-                                                              @RequestPart(value = "teamIcon", required = false) MultipartFile teamIcon,
-                                                              @LoginMember Member member){
-        teamService.createTeam(teamRequest, teamIcon, member);
+                                                      @RequestPart(value = "image", required = false) MultipartFile image,
+                                                      @LoginMember Member member){
+        teamService.createTeam(teamRequest, image, member);
 
         return ResponseEntity.status(TEAM_CREATED_SUCCESS.getStatusCode())
                 .contentType(MediaType.APPLICATION_JSON)
