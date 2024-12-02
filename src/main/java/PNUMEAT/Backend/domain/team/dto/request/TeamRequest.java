@@ -28,7 +28,7 @@ public record TeamRequest(
         @NotNullOrBlank
         String topic,
 
-        @NotNullOrBlank
+        @NotNull(message="null 값이 될 수 없습니다.")
         @Digits(integer = Integer.MAX_VALUE, fraction = 0, message = "2 ~ 20 사이의 숫자를 입력해주세요.")
         @Min(value = 2, message = "2 ~ 20 사이의 숫자를 입력해주세요.")
         @Max(value = 20, message = "2 ~ 20 사이의 숫자를 입력해주세요.")

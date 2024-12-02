@@ -2,11 +2,11 @@ package PNUMEAT.Backend.domain.team.entity;
 
 import PNUMEAT.Backend.domain.auth.entity.Member;
 import PNUMEAT.Backend.domain.team.enums.Topic;
-import PNUMEAT.Backend.domain.team_member.entity.TeamMember;
+import PNUMEAT.Backend.domain.teamMember.entity.TeamMember;
+import PNUMEAT.Backend.global.util.TimeStamp;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
@@ -18,7 +18,7 @@ import static PNUMEAT.Backend.global.images.ImageConstant.DEFAULT_TEAM_IMAGE_URL
 @Entity
 @Getter
 @EntityListeners(AuditingEntityListener.class)
-public class Team {
+public class Team extends TimeStamp {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long teamId;
@@ -35,7 +35,6 @@ public class Team {
 
     private String teamPassword;
 
-    @CreatedDate
     private LocalDateTime createdAt;
 
     private int streakDays;
@@ -44,7 +43,7 @@ public class Team {
     @JoinColumn(name = "member_id")
     private Member teamManager;
 
-    @OneToMany(mappedBy = "team")
+    @OneToMany(mappedBy = "team", fetch = FetchType.LAZY)
     private List<TeamMember> teamMembers = new ArrayList<>();
 
     protected Team(){
