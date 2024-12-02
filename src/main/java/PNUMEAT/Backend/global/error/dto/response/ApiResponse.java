@@ -24,6 +24,11 @@ public class ApiResponse<T> {
         return new ApiResponse<>(SUCCESS, HttpStatus.OK.value(), null, data);
     }
 
+    public static <T> ApiResponse<?> successResponseWithMessage(String message){
+        return new ApiResponse<>(SUCCESS, HttpStatus.OK.value(), message, null);
+    }
+
+
     public static <T> ApiResponse<?> createResponse(T data){
         return new ApiResponse<>(SUCCESS, HttpStatus.CREATED.value(), null, data);
     }

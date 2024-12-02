@@ -12,9 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 public class CookieUtils {
 
     public static Cookie createCookie(String key, String value) {
-
         Cookie cookie = new Cookie(key, value);
-
         cookie.setMaxAge(60 * 60);
         //cookie.setSecure(true);
         cookie.setPath("/");
@@ -27,7 +25,6 @@ public class CookieUtils {
         Cookie cookie = new Cookie(REFRESH_TOKEN, null);
         cookie.setMaxAge(0);
         cookie.setPath("/");
-
         response.addCookie(cookie);
         response.setStatus(HttpServletResponse.SC_OK);
     }

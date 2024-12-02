@@ -72,7 +72,7 @@ public class SecurityConfiguration {
 
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/login", "/reissue").permitAll()
+                        .requestMatchers("/api/v1/reissue").permitAll()
                         .anyRequest().authenticated());
 
         http
