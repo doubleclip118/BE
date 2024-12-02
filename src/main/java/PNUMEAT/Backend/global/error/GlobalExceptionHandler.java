@@ -29,8 +29,8 @@ public class GlobalExceptionHandler {
         .body(ApiResponse.validationErrorResponse(errorValidationResult));
   }
 
-  @ExceptionHandler(Team24Exception.class)
-  public ResponseEntity<ApiResponse<?>> team24ExceptionHandler(Team24Exception e) {
+  @ExceptionHandler(ComonException.class)
+  public ResponseEntity<ApiResponse<?>> team24ExceptionHandler(ComonException e) {
     ErrorResult errorResult = new ErrorResult(e.getStatusCode(), e.getMessage());
 
     return ResponseEntity.status(HttpStatus.BAD_REQUEST)

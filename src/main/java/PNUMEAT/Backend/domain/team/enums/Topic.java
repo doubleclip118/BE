@@ -1,7 +1,6 @@
 package PNUMEAT.Backend.domain.team.enums;
 
-import PNUMEAT.Backend.global.error.ErrorCode;
-import PNUMEAT.Backend.global.error.Team24Exception;
+import PNUMEAT.Backend.global.error.ComonException;
 
 import static PNUMEAT.Backend.global.error.ErrorCode.TOPIC_INVALID_ERROR;
 
@@ -31,6 +30,6 @@ public enum Topic {
                 return topic;
             }
         }
-        throw new Team24Exception(TOPIC_INVALID_ERROR);
+        throw new ComonException(TOPIC_INVALID_ERROR);
     }
 }
