@@ -51,22 +51,11 @@ public class JWTAccessFilter extends OncePerRequestFilter {
 
         String authorization = request.getHeader(AuthConstant.AUTHORIZATION);
 
-
-        String authorizationInSession = (String) request.getSession().getAttribute("authToken");
-
-        if(authorizationInSession == null && authorization == null){
-            response.sendRedirect("/");
-            return;
-        }
-        if(authorizationInSession != null && authorization == null){
-            authorization = authorizationInSession;
-        }
-
         //Authorization 헤더 검증
         if (checkHeader(authorization)) {
 
             log.info("Access Token Not Exist");
-            filterResponseUtils.generateUnauthorizedErrorResponse(ErrorCode.UNAUTHORIZED_USER_ERROR, response);
+            filterResponseUtils.generateUnAuthorizationErrorResponse(ErrorCode.UNAUTHORIZED_USER_ERROR, response);
             return;
         }
 
@@ -86,6 +75,8 @@ public class JWTAccessFilter extends OncePerRequestFilter {
         Collection<GrantedAuthority> collection = getGrantedAuthorities(token);
 
         Authentication authToken = new UsernamePasswordAuthenticationToken(token, null, collection);
+
+        log.info("in the jwt Filter authentication = {}", authToken);
 
         SecurityContextHolder.getContext().setAuthentication(authToken);
 
@@ -113,8 +104,6 @@ public class JWTAccessFilter extends OncePerRequestFilter {
     }
 
     private boolean isReissue(String requestUri) {
-        return requestUri.matches("^\\/reissue(?:\\/.*)?$");
+        return requestUri.matches("^\\/api/v1/reissue(?:\\/.*)?$");
     }
-
-
 }

@@ -1,9 +1,9 @@
 package PNUMEAT.Backend.global.error;
 
-public class Team24Exception extends RuntimeException{
+public class ComonException extends RuntimeException{
     private final ErrorCode errorCode;
 
-    public Team24Exception(ErrorCode errorCode) {
+    public ComonException(ErrorCode errorCode) {
         super(errorCode.getMessage());
         this.errorCode = errorCode;
     }

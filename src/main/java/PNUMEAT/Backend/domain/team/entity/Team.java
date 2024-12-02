@@ -17,7 +17,6 @@ import static PNUMEAT.Backend.global.images.ImageConstant.DEFAULT_TEAM_IMAGE_URL
 
 @Entity
 @Getter
-@EntityListeners(AuditingEntityListener.class)
 public class Team extends TimeStamp {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,8 +33,6 @@ public class Team extends TimeStamp {
     private int maxParticipant;
 
     private String teamPassword;
-
-    private LocalDateTime createdAt;
 
     private int streakDays;
 

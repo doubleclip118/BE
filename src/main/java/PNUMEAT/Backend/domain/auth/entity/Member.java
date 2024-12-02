@@ -38,10 +38,10 @@ public class Member {
 
     private String description;
 
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     private List<Article> articles = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     private List<TeamMember> teamMembers = new ArrayList<>();
 
     protected Member() {

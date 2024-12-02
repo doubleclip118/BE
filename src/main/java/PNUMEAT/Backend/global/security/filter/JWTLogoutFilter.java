@@ -2,6 +2,7 @@ package PNUMEAT.Backend.global.security.filter;
 
 import PNUMEAT.Backend.domain.auth.constant.AuthConstant;
 import PNUMEAT.Backend.domain.auth.repository.RefreshTokenRepository;
+import PNUMEAT.Backend.global.error.ErrorCode;
 import PNUMEAT.Backend.global.security.utils.servletUtils.cookie.CookieUtils;
 import PNUMEAT.Backend.global.security.utils.servletUtils.jwtUtils.FilterResponseUtils;
 import jakarta.servlet.FilterChain;
@@ -43,7 +44,7 @@ public class JWTLogoutFilter extends GenericFilterBean {
         String refresh = CookieUtils.checkRefreshTokenInCookie(request);
 
         if (refresh == null) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            filterResponseUtils.generateTokenErrorResponse(ErrorCode.TOKEN_ERROR, response);
             return;
         }
 
@@ -64,7 +65,7 @@ public class JWTLogoutFilter extends GenericFilterBean {
 
         CookieUtils.clearCookie(response);
 
-        filterResponseUtils.generateLogoutResponse(response);
+        filterChain.doFilter(request, response);
     }
 
     private boolean isHttpMethodPost(String requestMethod) {
@@ -72,7 +73,7 @@ public class JWTLogoutFilter extends GenericFilterBean {
     }
 
     private boolean isUrlLogout(String requestUri) {
-        return requestUri.matches("^\\/logout$");
+        return requestUri.matches("^/api/v1/logout$");
     }
 
 }

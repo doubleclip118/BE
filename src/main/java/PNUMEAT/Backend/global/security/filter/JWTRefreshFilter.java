@@ -2,6 +2,7 @@ package PNUMEAT.Backend.global.security.filter;
 
 import PNUMEAT.Backend.domain.auth.constant.AuthConstant;
 import PNUMEAT.Backend.domain.auth.repository.RefreshTokenRepository;
+import PNUMEAT.Backend.global.error.ErrorCode;
 import PNUMEAT.Backend.global.security.utils.servletUtils.cookie.CookieUtils;
 import PNUMEAT.Backend.global.security.utils.servletUtils.jwtUtils.FilterResponseUtils;
 import jakarta.servlet.FilterChain;
@@ -34,7 +35,7 @@ public class JWTRefreshFilter extends OncePerRequestFilter {
         String refresh = CookieUtils.checkRefreshTokenInCookie(request);
 
         if (refresh == null) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            filterResponseUtils.generateTokenErrorResponse(ErrorCode.TOKEN_ERROR, response);
             return;
         }
 
@@ -57,7 +58,7 @@ public class JWTRefreshFilter extends OncePerRequestFilter {
     }
 
     private boolean isUrlRefresh(String requestUri) {
-        return requestUri.matches("^\\/reissue(?:\\/.*)?$");
+        return requestUri.matches("^/api/v1/reissue(?:/.*)?$");
     }
 
 }
