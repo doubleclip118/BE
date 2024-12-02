@@ -1,6 +1,6 @@
-package PNUMEAT.Backend.domain.team_member.repository;
+package PNUMEAT.Backend.domain.teamMember.repository;
 
-import PNUMEAT.Backend.domain.team_member.entity.TeamMember;
+import PNUMEAT.Backend.domain.teamMember.entity.TeamMember;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

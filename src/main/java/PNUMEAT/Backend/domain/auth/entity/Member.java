@@ -4,7 +4,7 @@ package PNUMEAT.Backend.domain.auth.entity;
 import static PNUMEAT.Backend.global.images.ImageConstant.DEFAULT_MEMBER_PROFILE_IMAGE_URL;
 
 import PNUMEAT.Backend.domain.article.entity.Article;
-import PNUMEAT.Backend.domain.team_member.entity.TeamMember;
+import PNUMEAT.Backend.domain.teamMember.entity.TeamMember;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;

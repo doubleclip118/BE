@@ -2,12 +2,10 @@ package PNUMEAT.Backend.domain.team.entity;
 
 import PNUMEAT.Backend.domain.auth.entity.Member;
 import PNUMEAT.Backend.domain.team.enums.Topic;
-import PNUMEAT.Backend.domain.team_member.entity.TeamMember;
+import PNUMEAT.Backend.domain.teamMember.entity.TeamMember;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
-import org.hibernate.annotations.Fetch;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
@@ -36,7 +34,6 @@ public class Team {
 
     private String teamPassword;
 
-    @CreatedDate
     private LocalDateTime createdAt;
 
     private int streakDays;
