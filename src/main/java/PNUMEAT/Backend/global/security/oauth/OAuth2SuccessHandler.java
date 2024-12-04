@@ -48,13 +48,12 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         Optional<RefreshToken> findRefreshToken = refreshTokenService.findRefreshToken(customUserDetails.getMember().getId());
 
-        String refreshToken = null;
+        String refreshToken = jwtUtil.generateRefreshToken(uuid, role);
 
         if (findRefreshToken.isEmpty()) {
-            refreshToken = jwtUtil.generateRefreshToken(uuid, role);
             refreshTokenService.addRefreshEntity(refreshToken, uuid, jwtUtil.getRefreshExpiredTime());
         } else {
-            refreshToken = findRefreshToken.get().getToken();
+            refreshTokenService.renewalRefreshToken(findRefreshToken.get().getToken(), refreshToken, jwtUtil.getRefreshExpiredTime());
         }
 
         String accessToken = jwtUtil.generateAccessToken(uuid, role);
@@ -71,9 +70,9 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         }
     }
 
-    private void setInformationInResponse(HttpServletResponse response, String accessToken, String refreshToken) throws IOException {
+    private void setInformationInResponse(HttpServletResponse response, String accessToken, String refreshToken) {
         Cookie access = CookieUtils.createCookie(ACCESS_TOKEN, accessToken);
-        Cookie refresh = CookieUtils.createCookie(REFRESH_TOKEN, refreshToken);
+        Cookie refresh = CookieUtils.createCookieWithHttpOnly(REFRESH_TOKEN, refreshToken);
 
         response.addCookie(access);
         response.addCookie(refresh);
