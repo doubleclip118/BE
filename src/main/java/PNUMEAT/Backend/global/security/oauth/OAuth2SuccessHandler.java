@@ -48,13 +48,12 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         Optional<RefreshToken> findRefreshToken = refreshTokenService.findRefreshToken(customUserDetails.getMember().getId());
 
-        String refreshToken = null;
+        String refreshToken = jwtUtil.generateRefreshToken(uuid, role);
 
         if (findRefreshToken.isEmpty()) {
-            refreshToken = jwtUtil.generateRefreshToken(uuid, role);
             refreshTokenService.addRefreshEntity(refreshToken, uuid, jwtUtil.getRefreshExpiredTime());
         } else {
-            refreshToken = findRefreshToken.get().getToken();
+            refreshTokenService.renewalRefreshToken(findRefreshToken.get().getToken(), refreshToken, jwtUtil.getRefreshExpiredTime());
         }
 
         String accessToken = jwtUtil.generateAccessToken(uuid, role);
