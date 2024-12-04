@@ -8,8 +8,9 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum ErrorCode {
     //AUTH
-    UNAUTHORIZED_USER_ERROR(HttpStatus.UNAUTHORIZED, "인증 되지 않은 사용자 입니다."),
-    USER_NOT_FOUND_ERROR(HttpStatus.NOT_FOUND, "존재하지 않는 유저입니다. 유저를 찾을 수 없습니다."),
+    UNAUTHORIZED_MEMBER_ERROR(HttpStatus.UNAUTHORIZED, "인증 되지 않은 사용자 입니다."),
+    MEMBER_NOT_FOUND_ERROR(HttpStatus.NOT_FOUND, "존재하지 않는 유저입니다. 유저를 찾을 수 없습니다."),
+    MEMBER_PROFILE_UPDATE_VALIDATION_ERROR(HttpStatus.BAD_REQUEST, "프로필 수정할 부분에 값을 입력해 주세요."),
     TOKEN_EXPIRED_ERROR(HttpStatus.UNAUTHORIZED, "토큰이 만료되었습니다."),
     TOKEN_MALFORMED_ERROR(HttpStatus.UNAUTHORIZED, "올바른 Token 형식이 아닙니다."),
     TOKEN_UNSUPPORTED_ERROR(HttpStatus.UNAUTHORIZED, "지원하지 않는 Token 입니다."),
