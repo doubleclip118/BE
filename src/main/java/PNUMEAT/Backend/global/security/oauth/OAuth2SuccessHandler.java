@@ -71,9 +71,9 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         }
     }
 
-    private void setInformationInResponse(HttpServletResponse response, String accessToken, String refreshToken) throws IOException {
+    private void setInformationInResponse(HttpServletResponse response, String accessToken, String refreshToken) {
         Cookie access = CookieUtils.createCookie(ACCESS_TOKEN, accessToken);
-        Cookie refresh = CookieUtils.createCookie(REFRESH_TOKEN, refreshToken);
+        Cookie refresh = CookieUtils.createCookieWithHttpOnly(REFRESH_TOKEN, refreshToken);
 
         response.addCookie(access);
         response.addCookie(refresh);

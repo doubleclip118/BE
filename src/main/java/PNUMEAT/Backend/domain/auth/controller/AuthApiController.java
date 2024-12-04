@@ -56,7 +56,7 @@ public class AuthApiController {
 
         response.setHeader(AuthConstant.AUTHORIZATION, AuthConstant.BEARER + newAccess);
         response.addCookie(CookieUtils.createCookie(AuthConstant.ACCESS_TOKEN, newAccess));
-        response.addCookie(CookieUtils.createCookie(AuthConstant.REFRESH_TOKEN, newRefresh));
+        response.addCookie(CookieUtils.createCookieWithHttpOnly(AuthConstant.REFRESH_TOKEN, newRefresh));
 
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
