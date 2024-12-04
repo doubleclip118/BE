@@ -91,7 +91,7 @@ public class JWTAccessFilterTest {
         mvc.perform(get("/api/v1/auth"))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.code").value(401))
-                .andExpect(jsonPath("$.message").value(ErrorCode.UNAUTHORIZED_USER_ERROR.getMessage()))
+                .andExpect(jsonPath("$.message").value(ErrorCode.UNAUTHORIZED_MEMBER_ERROR.getMessage()))
                 .andDo(print());
     }
 

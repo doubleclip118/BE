@@ -55,7 +55,7 @@ public class JWTAccessFilter extends OncePerRequestFilter {
         if (checkHeader(authorization)) {
 
             log.info("Access Token Not Exist");
-            filterResponseUtils.generateUnAuthorizationErrorResponse(ErrorCode.UNAUTHORIZED_USER_ERROR, response);
+            filterResponseUtils.generateUnAuthorizationErrorResponse(ErrorCode.UNAUTHORIZED_MEMBER_ERROR, response);
             return;
         }
 

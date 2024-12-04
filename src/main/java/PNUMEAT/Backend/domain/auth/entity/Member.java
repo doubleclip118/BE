@@ -55,8 +55,13 @@ public class Member {
     }
 
     public void updateProfile(String memberName, String description){
-        this.memberName = memberName;
-        this.description = description;
+        if(memberName != null){
+            this.memberName = memberName;
+        }
+
+        if(description != null){
+            this.description = description;
+        }
     }
 
     public void updateImageUrl(String imageUrl){
