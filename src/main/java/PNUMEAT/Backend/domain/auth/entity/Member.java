@@ -55,11 +55,11 @@ public class Member {
     }
 
     public void updateProfile(String memberName, String description){
-        if(memberName != null){
+        if(!memberName.isEmpty()){
             this.memberName = memberName;
         }
 
-        if(description != null){
+        if(!description.isEmpty()){
             this.description = description;
         }
     }
