@@ -1,5 +1,6 @@
 package PNUMEAT.Backend.domain.team.entity;
 
+import PNUMEAT.Backend.domain.article.entity.Article;
 import PNUMEAT.Backend.domain.auth.entity.Member;
 import PNUMEAT.Backend.domain.team.enums.Topic;
 import PNUMEAT.Backend.domain.teamMember.entity.TeamMember;
@@ -7,9 +8,7 @@ import PNUMEAT.Backend.global.util.TimeStamp;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,12 +35,15 @@ public class Team extends TimeStamp {
 
     private int streakDays;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member teamManager;
 
-    @OneToMany(mappedBy = "team", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "team")
     private List<TeamMember> teamMembers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "team")
+    private List<Article> articles = new ArrayList<>();
 
     protected Team(){
     }
