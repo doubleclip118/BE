@@ -16,6 +16,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -52,5 +56,14 @@ public class TeamService {
 
     public Page<Team> getAllTeams(Pageable pageable){
         return teamRepository.findAll(pageable);
+    }
+
+    public List<Team> getMyTeam(Member member){
+        List<Long> teamIds = teamMemberRepository.findTeamIdsByMemberId(member.getId());
+
+        if(teamIds.isEmpty()){
+            return Collections.emptyList();
+        }
+        return teamRepository.findTeamsWithMembersByTeamIds(Arrays.asList(teamIds.getLast()));
     }
 }

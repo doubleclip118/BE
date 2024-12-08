@@ -2,9 +2,11 @@ package PNUMEAT.Backend.domain.team.controller;
 
 import PNUMEAT.Backend.domain.auth.entity.Member;
 import PNUMEAT.Backend.domain.team.dto.request.TeamRequest;
+import PNUMEAT.Backend.domain.team.dto.response.MyTeamResponse;
 import PNUMEAT.Backend.domain.team.dto.response.TeamAllResponse;
 import PNUMEAT.Backend.domain.team.entity.Team;
 import PNUMEAT.Backend.domain.team.service.TeamService;
+import PNUMEAT.Backend.domain.teamMember.entity.TeamMember;
 import PNUMEAT.Backend.global.error.dto.response.ApiResponse;
 import PNUMEAT.Backend.global.security.annotation.LoginMember;
 import jakarta.validation.Valid;
@@ -18,10 +20,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
-import static PNUMEAT.Backend.global.response.ResponseMessageEnum.TEAM_CREATED_SUCCESS;
-import static PNUMEAT.Backend.global.response.ResponseMessageEnum.TEAM_TOTAL_DETAILS_SUCCESS;
+import static PNUMEAT.Backend.global.response.ResponseMessageEnum.*;
 
 @RestController
 @RequestMapping("/api/v1/teams")
@@ -46,12 +48,27 @@ public class TeamController {
                                                              @RequestParam(defaultValue = "0") int page,
                                                              @RequestParam(defaultValue = "6") int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdDate"));
+
         Page<Team> teams = teamService.getAllTeams(pageable);
+
         Page<TeamAllResponse> teamAllResponses = teams.map(TeamAllResponse::of);
 
         return ResponseEntity.status(TEAM_TOTAL_DETAILS_SUCCESS.getStatusCode())
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(ApiResponse.successResponse(teamAllResponses));
+    }
+
+    @GetMapping("/my")
+    public ResponseEntity<ApiResponse<?>> getMyTeam(@LoginMember Member member){
+        List<Team> teamMembers =  teamService.getMyTeam(member);
+
+        List<MyTeamResponse> myTeamResponse = teamMembers.stream()
+                .map(MyTeamResponse::of)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.status(MY_TEAM_DETAILS_SUCCESS.getStatusCode())
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(ApiResponse.successResponse(myTeamResponse));
     }
 }
 
