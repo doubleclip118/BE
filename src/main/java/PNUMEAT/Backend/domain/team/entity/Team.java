@@ -1,5 +1,6 @@
 package PNUMEAT.Backend.domain.team.entity;
 
+import PNUMEAT.Backend.domain.article.entity.Article;
 import PNUMEAT.Backend.domain.auth.entity.Member;
 import PNUMEAT.Backend.domain.team.enums.Topic;
 import PNUMEAT.Backend.domain.teamMember.entity.TeamMember;
@@ -40,6 +41,9 @@ public class Team extends TimeStamp {
 
     @OneToMany(mappedBy = "team")
     private List<TeamMember> teamMembers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "team")
+    private List<Article> articles = new ArrayList<>();
 
     protected Team(){
     }
