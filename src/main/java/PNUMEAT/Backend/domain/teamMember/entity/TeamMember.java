@@ -3,20 +3,22 @@ package PNUMEAT.Backend.domain.teamMember.entity;
 import PNUMEAT.Backend.domain.auth.entity.Member;
 import PNUMEAT.Backend.domain.team.entity.Team;
 import jakarta.persistence.*;
+import lombok.Getter;
 
 import java.util.Objects;
 
+@Getter
 @Entity
 public class TeamMember {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long teamInfoId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="member_id")
     private Member member;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="team_id")
     private Team team;
 
