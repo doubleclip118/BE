@@ -42,9 +42,6 @@ public class Team extends TimeStamp {
     @OneToMany(mappedBy = "team")
     private List<TeamMember> teamMembers = new ArrayList<>();
 
-    @OneToMany(mappedBy = "team")
-    private List<Article> articles = new ArrayList<>();
-
     protected Team(){
     }
 
