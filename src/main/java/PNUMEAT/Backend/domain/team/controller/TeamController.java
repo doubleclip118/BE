@@ -73,7 +73,7 @@ public class TeamController {
     }
 
     @GetMapping("/combined")
-    public ResponseEntity<ApiResponse<?>> getOverviewTeams(@RequestParam(name = "sort", defaultValue = "recent") String sort,
+    public ResponseEntity<ApiResponse<?>> getCombinedTeamsInfo(@RequestParam(name = "sort", defaultValue = "recent") String sort,
                                                            @RequestParam(name = "page", defaultValue = "0") int page,
                                                            @RequestParam(name = "size", defaultValue = "6") int size,
                                                            @LoginMember Member member) {
