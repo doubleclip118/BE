@@ -2,6 +2,7 @@ package PNUMEAT.Backend.domain.team.service;
 
 import PNUMEAT.Backend.domain.auth.entity.Member;
 import PNUMEAT.Backend.domain.team.dto.request.TeamRequest;
+import PNUMEAT.Backend.domain.team.dto.response.TeamAllResponse;
 import PNUMEAT.Backend.domain.team.entity.Team;
 import PNUMEAT.Backend.domain.team.enums.Topic;
 import PNUMEAT.Backend.domain.team.repository.TeamRepository;
@@ -9,9 +10,15 @@ import PNUMEAT.Backend.domain.teamMember.entity.TeamMember;
 import PNUMEAT.Backend.domain.teamMember.repository.TeamMemberRepository;
 import PNUMEAT.Backend.global.images.ImageService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -45,5 +52,18 @@ public class TeamService {
         teamMemberRepository.save(teamMember);
 
         return teamRepository.save(team);
+    }
+
+    public Page<Team> getAllTeams(Pageable pageable){
+        return teamRepository.findAll(pageable);
+    }
+
+    public List<Team> getMyTeam(Member member){
+        List<Long> teamIds = teamMemberRepository.findTeamIdsByMemberId(member.getId());
+
+        if(teamIds.isEmpty()){
+            return Collections.emptyList();
+        }
+        return teamRepository.findTeamsWithMembersByTeamIds(Arrays.asList(teamIds.getLast()));
     }
 }

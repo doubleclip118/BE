@@ -3,9 +3,11 @@ package PNUMEAT.Backend.domain.teamMember.entity;
 import PNUMEAT.Backend.domain.auth.entity.Member;
 import PNUMEAT.Backend.domain.team.entity.Team;
 import jakarta.persistence.*;
+import lombok.Getter;
 
 import java.util.Objects;
 
+@Getter
 @Entity
 public class TeamMember {
     @Id

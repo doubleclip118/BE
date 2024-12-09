@@ -33,7 +33,7 @@ public class Team extends TimeStamp {
 
     private String teamPassword;
 
-    private int streakDays;
+    private int streakDays = 0;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
@@ -41,9 +41,6 @@ public class Team extends TimeStamp {
 
     @OneToMany(mappedBy = "team")
     private List<TeamMember> teamMembers = new ArrayList<>();
-
-    @OneToMany(mappedBy = "team")
-    private List<Article> articles = new ArrayList<>();
 
     protected Team(){
     }
