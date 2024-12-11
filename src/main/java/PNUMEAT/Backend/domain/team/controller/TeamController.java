@@ -96,7 +96,7 @@ public class TeamController {
                 .body(ApiResponse.successResponse(teamCombinedResponse));
     }
 
-    @GetMapping("/{teamId}/join")
+    @PostMapping("/{teamId}/join")
     public ResponseEntity<ApiResponse<?>> getMyTeam(@PathVariable("teamId") Long teamId,
                                                     @RequestBody TeamJoinRequest teamJoinRequest,
                                                     @LoginMember Member member){
