@@ -1,5 +1,7 @@
 package PNUMEAT.Backend.domain.teamMember.repository;
 
+import PNUMEAT.Backend.domain.auth.entity.Member;
+import PNUMEAT.Backend.domain.team.entity.Team;
 import PNUMEAT.Backend.domain.teamMember.entity.TeamMember;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -14,4 +16,6 @@ public interface TeamMemberRepository extends JpaRepository<TeamMember, Long> {
             "FROM TeamMember tm " +
             "WHERE tm.member.id = :memberId")
     List<Long> findTeamIdsByMemberId(@Param("memberId") Long memberId);
+
+    boolean existsByTeamAndMember(Team team, Member member);
 }

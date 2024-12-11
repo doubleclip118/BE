@@ -1,6 +1,7 @@
 package PNUMEAT.Backend.domain.team.controller;
 
 import PNUMEAT.Backend.domain.auth.entity.Member;
+import PNUMEAT.Backend.domain.team.dto.request.TeamJoinRequest;
 import PNUMEAT.Backend.domain.team.dto.request.TeamRequest;
 import PNUMEAT.Backend.domain.team.dto.response.MyTeamResponse;
 import PNUMEAT.Backend.domain.team.dto.response.TeamAllResponse;
@@ -93,6 +94,17 @@ public class TeamController {
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(ApiResponse.successResponse(teamCombinedResponse));
+    }
+
+    @PostMapping("/{teamId}/join")
+    public ResponseEntity<ApiResponse<?>> joinTeam(@PathVariable("teamId") Long teamId,
+                                                    @RequestBody TeamJoinRequest teamJoinRequest,
+                                                    @LoginMember Member member){
+        teamService.joinTeam(member, teamJoinRequest.password(), teamId);
+
+        return ResponseEntity.status(TEAM_JOIN_SUCCESS.getStatusCode())
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(ApiResponse.successResponseWithMessage(TEAM_JOIN_SUCCESS.getMessage()));
     }
 }
 

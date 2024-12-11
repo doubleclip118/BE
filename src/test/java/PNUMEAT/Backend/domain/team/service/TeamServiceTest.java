@@ -7,6 +7,7 @@ import PNUMEAT.Backend.domain.team.enums.Topic;
 import PNUMEAT.Backend.domain.team.repository.TeamRepository;
 import PNUMEAT.Backend.domain.teamMember.entity.TeamMember;
 import PNUMEAT.Backend.domain.teamMember.repository.TeamMemberRepository;
+import PNUMEAT.Backend.global.error.ComonException;
 import PNUMEAT.Backend.global.images.ImageConstant;
 import PNUMEAT.Backend.global.images.ImageService;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,8 +25,11 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
+import static PNUMEAT.Backend.global.error.ErrorCode.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
@@ -48,6 +52,7 @@ class TeamServiceTest {
     private Team team2;
     private Team team3;
     private Team team4;
+    private final String PASSWORD = "1111";
 
     @BeforeEach
     void setUp() {
@@ -188,13 +193,75 @@ class TeamServiceTest {
         assertThat(result).isEmpty();
     }
 
+    @Test
+    @DisplayName("팀 가입하기 - 정상 가입")
+    void joinTeam_정상가입() {
+        // given
+        Long teamId = team2.getTeamId();
+        TeamMember teamMember = new TeamMember(team2, member);
+
+        given(teamRepository.findById(teamId)).willReturn(Optional.of(team2));
+        given(teamMemberRepository.existsByTeamAndMember(team2,member)).willReturn(false);
+        given(teamMemberRepository.save(teamMember)).willReturn(teamMember);
+
+        // when
+        TeamMember savedTamMember = teamService.joinTeam(member,PASSWORD,teamId);
+
+
+        // then
+        assertThat(savedTamMember.getTeam().getTeamId()).isEqualTo(team2.getTeamId());
+        assertThat(savedTamMember.getMember().getUuid()).isEqualTo(member.getUuid());
+    }
+
+    @Test
+    @DisplayName("팀 가입하기 - 팀이 존재하지 않는 경우")
+    void joinTeam_팀이_존재하지_않는_경우() {
+        // given
+        Long invalidTeamId = 7L;
+        given(teamRepository.findById(invalidTeamId)).willReturn(Optional.empty());
+
+        // expected
+        assertThatThrownBy(() -> teamService.joinTeam(member,PASSWORD,invalidTeamId))
+                .isInstanceOf(ComonException.class)
+                .hasMessage(TEAM_NOT_FOUND_ERROR.getMessage());
+    }
+
+    @Test
+    @DisplayName("팀 가입하기 - 비밀번호가 틀린 경우")
+    void joinTeam_비밀번호가_틀린_경우() {
+        // given
+        String invalidPassword = "2222";
+
+        Long teamId = team2.getTeamId();
+        given(teamRepository.findById(teamId)).willReturn(Optional.of(team2));
+
+        // expected
+        assertThatThrownBy(() -> teamService.joinTeam(member,invalidPassword,teamId))
+                .isInstanceOf(ComonException.class)
+                .hasMessage(TEAM_PASSWORD_INVALID.getMessage());
+    }
+
+    @Test
+    @DisplayName("팀 가입하기 - 이미 동일한 팀에 가입한 경우")
+    void joinTeam_이미_동일한_팀에_가입한_경우() {
+        // given
+        Long teamId = team2.getTeamId();
+        given(teamRepository.findById(teamId)).willReturn(Optional.of(team2));
+        given(teamMemberRepository.existsByTeamAndMember(team2,member)).willReturn(true);
+
+        // expected
+        assertThatThrownBy(() -> teamService.joinTeam(member,PASSWORD,teamId))
+                .isInstanceOf(ComonException.class)
+                .hasMessage(TEAM_ALREADY_JOIN.getMessage());
+    }
+
     private Team createTeam(String teamName, String teamExplain, int maxParticipant, Member teamManager) {
         return Team.builder()
                 .teamName(teamName)
                 .teamExplain(teamExplain)
                 .teamTopic(Topic.CODINGTEST)
                 .maxParticipant(maxParticipant)
-                .teamPassword("1111")
+                .teamPassword(PASSWORD)
                 .teamManager(teamManager)
                 .build();
     }
