@@ -2,12 +2,12 @@ package PNUMEAT.Backend.domain.team.service;
 
 import PNUMEAT.Backend.domain.auth.entity.Member;
 import PNUMEAT.Backend.domain.team.dto.request.TeamRequest;
-import PNUMEAT.Backend.domain.team.dto.response.TeamAllResponse;
 import PNUMEAT.Backend.domain.team.entity.Team;
 import PNUMEAT.Backend.domain.team.enums.Topic;
 import PNUMEAT.Backend.domain.team.repository.TeamRepository;
 import PNUMEAT.Backend.domain.teamMember.entity.TeamMember;
 import PNUMEAT.Backend.domain.teamMember.repository.TeamMemberRepository;
+import PNUMEAT.Backend.global.error.ComonException;
 import PNUMEAT.Backend.global.images.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -19,6 +19,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import static PNUMEAT.Backend.global.error.ErrorCode.*;
 
 @Service
 @Transactional(readOnly = true)
@@ -65,5 +67,31 @@ public class TeamService {
             return Collections.emptyList();
         }
         return teamRepository.findTeamsWithMembersByTeamIds(Arrays.asList(teamIds.getLast()));
+    }
+
+    public void joinTeam(Member member, String password, Long teamId){
+        Team team = findTeamById(teamId);
+
+        validatePassword(password, team);
+        validateTeamMembership(team, member);
+
+        teamMemberRepository.save(new TeamMember(team, member));
+    }
+
+    private Team findTeamById(Long teamId) {
+        return teamRepository.findById(teamId)
+                .orElseThrow(() -> new ComonException(TEAM_NOT_FOUND_ERROR));
+    }
+
+    private void validatePassword(String password, Team team) {
+        if (!password.equals(team.getTeamPassword())) {
+            throw new ComonException(TEAM_PASSWORD_INVALID);
+        }
+    }
+
+    private void validateTeamMembership(Team team, Member member) {
+        if (teamMemberRepository.existsByTeamAndMember(team, member)) {
+            throw new ComonException(TEAM_ALREADY_JOIN);
+        }
     }
 }

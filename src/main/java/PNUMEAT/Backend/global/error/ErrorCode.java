@@ -22,6 +22,9 @@ public enum ErrorCode {
 
     //TEAM
     TOPIC_INVALID_ERROR(HttpStatus.BAD_REQUEST, "주제가 올바른 형식이 아닙니다."),
+    TEAM_NOT_FOUND_ERROR(HttpStatus.NOT_FOUND, "팀이 존재하지 않습니다."),
+    TEAM_PASSWORD_INVALID(HttpStatus.BAD_REQUEST, "팀 비밀번호가 옳지 않습니다."),
+    TEAM_ALREADY_JOIN(HttpStatus.CONFLICT, "이미 팀에 가입했습니다."),
 
     // ARTICLE
     ARTICLE_NOT_FOUND_ERROR(HttpStatus.NOT_FOUND, "존재 하지 않는 게시글 입니다."),
