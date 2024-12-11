@@ -97,7 +97,7 @@ public class TeamController {
     }
 
     @PostMapping("/{teamId}/join")
-    public ResponseEntity<ApiResponse<?>> getMyTeam(@PathVariable("teamId") Long teamId,
+    public ResponseEntity<ApiResponse<?>> joinTeam(@PathVariable("teamId") Long teamId,
                                                     @RequestBody TeamJoinRequest teamJoinRequest,
                                                     @LoginMember Member member){
         teamService.joinTeam(member, teamJoinRequest.password(), teamId);
