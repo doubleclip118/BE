@@ -8,6 +8,9 @@ import PNUMEAT.Backend.domain.team.repository.TeamRepository;
 import PNUMEAT.Backend.domain.teamMember.entity.TeamMember;
 import PNUMEAT.Backend.domain.teamMember.repository.TeamMemberRepository;
 import PNUMEAT.Backend.global.error.ComonException;
+import PNUMEAT.Backend.global.error.Team.TeamAlreadyJoinException;
+import PNUMEAT.Backend.global.error.Team.TeamNotFoundException;
+import PNUMEAT.Backend.global.error.Team.TeamPasswordInvalidException;
 import PNUMEAT.Backend.global.images.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -71,7 +74,7 @@ public class TeamService {
 
     public TeamMember joinTeam(Member member, String password, Long teamId){
         Team team = teamRepository.findById(teamId)
-                .orElseThrow(() -> new ComonException(TEAM_NOT_FOUND_ERROR));
+                .orElseThrow(TeamNotFoundException::new);
 
         validatePassword(password, team);
         validateTeamMembership(team, member);
@@ -81,13 +84,13 @@ public class TeamService {
 
     private void validatePassword(String password, Team team) {
         if (!password.equals(team.getTeamPassword())) {
-            throw new ComonException(TEAM_PASSWORD_INVALID);
+            throw new TeamPasswordInvalidException();
         }
     }
 
     private void validateTeamMembership(Team team, Member member) {
         if (teamMemberRepository.existsByTeamAndMember(team, member)) {
-            throw new ComonException(TEAM_ALREADY_JOIN);
+            throw new TeamAlreadyJoinException();
         }
     }
 }
