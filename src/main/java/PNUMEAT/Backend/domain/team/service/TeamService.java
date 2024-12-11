@@ -69,18 +69,14 @@ public class TeamService {
         return teamRepository.findTeamsWithMembersByTeamIds(Arrays.asList(teamIds.getLast()));
     }
 
-    public void joinTeam(Member member, String password, Long teamId){
-        Team team = findTeamById(teamId);
+    public TeamMember joinTeam(Member member, String password, Long teamId){
+        Team team = teamRepository.findById(teamId)
+                .orElseThrow(() -> new ComonException(TEAM_NOT_FOUND_ERROR));
 
         validatePassword(password, team);
         validateTeamMembership(team, member);
 
-        teamMemberRepository.save(new TeamMember(team, member));
-    }
-
-    private Team findTeamById(Long teamId) {
-        return teamRepository.findById(teamId)
-                .orElseThrow(() -> new ComonException(TEAM_NOT_FOUND_ERROR));
+        return teamMemberRepository.save(new TeamMember(team, member));
     }
 
     private void validatePassword(String password, Team team) {
