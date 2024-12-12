@@ -72,6 +72,7 @@ public class TeamService {
         return teamRepository.findTeamsWithMembersByTeamIds(Arrays.asList(teamIds.getLast()));
     }
 
+    @Transactional
     public TeamMember joinTeam(Member member, String password, Long teamId){
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(TeamNotFoundException::new);
