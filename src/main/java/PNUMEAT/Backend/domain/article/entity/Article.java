@@ -1,61 +1,58 @@
 package PNUMEAT.Backend.domain.article.entity;
 
-
-import PNUMEAT.Backend.domain.article.enums.Category;
+import PNUMEAT.Backend.domain.article.enums.ArticleCategory;
+import PNUMEAT.Backend.domain.article.enums.ArticleStatus;
 import PNUMEAT.Backend.domain.auth.entity.Member;
+import PNUMEAT.Backend.domain.team.entity.Team;
+import PNUMEAT.Backend.global.util.TimeStamp;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import lombok.NoArgsConstructor;
 
-@Entity
 @Getter
-@EntityListeners(AuditingEntityListener.class)
-public class Article {
+@Entity
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Table(name = "article")
+public class Article extends TimeStamp {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long articleId;
-    private String title;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
+    @JoinColumn(name = "team_id")
+    private Team team;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
     private Member member;
 
-    private String content;
-    @Enumerated(EnumType.STRING)
-    private Category category;
-    private String image;
-    private boolean deleted = false;
-    @CreatedDate
-    private LocalDateTime createdAt;
-    @LastModifiedDate
-    private LocalDateTime modifiedAt;
+    private String articleTitle;
 
-    protected Article() {
+    @Column(length = 3000)
+    private String articleBody;
+
+    private ArticleCategory articleCategory;
+
+    private ArticleStatus articleStatus;
+
+    @OneToMany(mappedBy = "article", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ArticleImage> images = new ArrayList<>();
+
+    public void updateTitle(String title){
+        this.articleTitle = title;
     }
-
-    public void updateArticle(String title, String content, Category category, String image) {
-        this.title = title;
-        this.content = content;
-        this.category = category;
-        this.image = image;
+    public void updateBody(String body){
+        this.articleBody = body;
     }
-
-    public void insertimgUrl(String image) {
-        this.image = image;
-    }
-
-    @Builder
-    public Article(String title, Member member, String content, Category category, String image, boolean deleted) {
-        this.title = title;
-        this.member = member;
-        this.content = content;
-        this.category = category;
-        this.image = image;
-        this.deleted = deleted;
+    public void updateCategory(ArticleCategory articleCategory){
+        this.articleCategory = articleCategory;
     }
 }
