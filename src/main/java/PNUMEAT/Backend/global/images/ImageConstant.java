@@ -6,5 +6,6 @@ public class ImageConstant {
     public static final String LOCAL_LOCATION =  "/home/ubuntu/image/";
     public static final String PROFILE_FOLDER = "profile";
     public static final String TEAM_FOLDER = "team";
+    public static final String ARTICLE_FOLDER = "article";
     public static final String AWS_PATH = "https://%s.s3.%s.amazonaws.com/%s";
 }
