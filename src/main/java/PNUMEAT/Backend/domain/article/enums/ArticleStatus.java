@@ -1,15 +1,14 @@
 package PNUMEAT.Backend.domain.article.enums;
 
-public enum Category {
-    BACKEND(1, "백엔드"),
-    FRONTEND(2, "프론트엔드"),
-    ANDROID(3, "안드로이드"),
-    GAME(4, "게임");
+public enum ArticleStatus {
+    DONE(1, "완료"),
+    WAITING(2, "대기"),
+    FAIL(3, "실패");
 
     private final int code;
     private final String name;
 
-    Category(int code, String name) {
+    ArticleStatus(int code, String name) {
         this.code = code;
         this.name = name;
     }
