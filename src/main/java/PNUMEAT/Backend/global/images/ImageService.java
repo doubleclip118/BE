@@ -93,6 +93,24 @@ public class ImageService {
         return updatedS3Url;
     }
 
+    public String articleImageUpload(MultipartFile multipartFile) {
+        String s3Url;
+        try {
+            String uuid = UUID.randomUUID().toString();
+            Image image = new Image(multipartFile, uuid, LOCAL_LOCATION);
+            s3Url = image.uploadToS3(s3Client, awsProperties.getBucket(), awsProperties.getRegion(),ARTICLE_FOLDER);
+
+            if (!image.deleteLocalFile()) {
+                log.error("로컬 파일 삭제 실패: {}", image.getLocalPath());
+            }
+        } catch (Exception e) {
+            log.error("파일 처리 중 오류 발생: {}", e.getMessage());
+            throw new ImageFileUploadException();
+        }
+
+        return s3Url;
+    }
+
     public void deleteImageByUrl(String s3Url) {
         try {
             String key = s3Url.substring(s3Url.lastIndexOf("/") + 1);

@@ -1,0 +1,125 @@
+package PNUMEAT.Backend.domain.article.controller;
+
+import static PNUMEAT.Backend.global.response.ResponseMessageEnum.ARTICLE_CREATE_SUCCESS;
+import static PNUMEAT.Backend.global.response.ResponseMessageEnum.ARTICLE_DELETE_SUCCESS;
+import static PNUMEAT.Backend.global.response.ResponseMessageEnum.ARTICLE_PUT_SUCCESS;
+import static PNUMEAT.Backend.global.response.ResponseMessageEnum.TEAM_CREATED_SUCCESS;
+
+import PNUMEAT.Backend.domain.article.dto.request.ArticleRequest;
+import PNUMEAT.Backend.domain.article.dto.response.ArticleResponse;
+import PNUMEAT.Backend.domain.article.entity.Article;
+import PNUMEAT.Backend.domain.article.service.ArticleService;
+import PNUMEAT.Backend.domain.auth.entity.Member;
+import PNUMEAT.Backend.global.error.dto.response.ApiResponse;
+import PNUMEAT.Backend.global.security.annotation.LoginMember;
+import jakarta.validation.Valid;
+import java.util.List;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
+@RestController
+@RequestMapping("/api/v1/articles")
+
+public class ArticleController {
+    private final ArticleService articleService;
+
+    public ArticleController(ArticleService articleService) {
+        this.articleService = articleService;
+    }
+    // 게시글 저장
+    @PostMapping
+    public ResponseEntity<?> createArticle(
+        @LoginMember Member member,
+        @ModelAttribute @Valid ArticleRequest articleRequest,
+        @RequestPart(value = "image", required = false) MultipartFile image) {
+
+        articleService.save(member.getId(), articleRequest, image);
+
+        return ResponseEntity.status(ARTICLE_CREATE_SUCCESS.getStatusCode())
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(ApiResponse.createResponseWithMessage(ARTICLE_CREATE_SUCCESS.getMessage()));
+    }
+
+    // 내 게시글 조회
+    @GetMapping()
+    public ResponseEntity<?> getMyArticles(@LoginMember Member member) {
+        List<Article> myArticles = articleService.getMyArticles(member.getId());
+
+        List<ArticleResponse> responses = myArticles.stream()
+            .map(ArticleResponse::of)
+            .toList();
+
+        return ResponseEntity.status(HttpStatus.OK)
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(ApiResponse.successResponse(responses));
+    }
+
+    // 팀 기준 게시글 조회
+    @GetMapping("/team/{teamId}")
+    public ResponseEntity<?> getArticlesByTeam(
+        @PathVariable Long teamId) {
+
+        //내 생각엔 팀에 이사람이 있는지부터 로직으로 확인해야할듯하다
+
+        List<Article> articles = articleService.getArticlesByTeam(teamId);
+        List<ArticleResponse> responses = articles.stream()
+            .map(ArticleResponse::of)
+            .toList();
+
+        return ResponseEntity.status(HttpStatus.OK)
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(ApiResponse.successResponse(responses));
+    }
+
+    // 특정 게시글 조회
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getArticleById(
+        @PathVariable Long id) {
+
+        Article article = articleService.getArticleById(id);
+
+        ArticleResponse response = ArticleResponse.of(article);
+
+        return ResponseEntity.status(HttpStatus.OK)
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(ApiResponse.successResponse(response));
+    }
+
+    // 게시글 삭제
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteArticle(
+        @PathVariable Long id) {
+
+        articleService.deleteArticle(id);
+
+        return ResponseEntity.status(ARTICLE_DELETE_SUCCESS.getStatusCode())
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(ApiResponse.createResponseWithMessage(ARTICLE_DELETE_SUCCESS.getMessage()));
+    }
+
+    // 게시글 수정
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateArticle(
+        @PathVariable Long id,
+        @ModelAttribute ArticleRequest articleRequest,
+        @RequestPart(value = "image", required = false) MultipartFile image) {
+
+        articleService.updateArticle(id, articleRequest, image);
+
+        return ResponseEntity.status(ARTICLE_PUT_SUCCESS.getStatusCode())
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(ApiResponse.createResponseWithMessage(ARTICLE_PUT_SUCCESS.getMessage()));
+    }
+}
