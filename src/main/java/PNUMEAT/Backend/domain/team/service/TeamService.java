@@ -7,8 +7,8 @@ import PNUMEAT.Backend.domain.team.enums.Topic;
 import PNUMEAT.Backend.domain.team.repository.TeamRepository;
 import PNUMEAT.Backend.domain.teamMember.entity.TeamMember;
 import PNUMEAT.Backend.domain.teamMember.repository.TeamMemberRepository;
-import PNUMEAT.Backend.global.error.ComonException;
 import PNUMEAT.Backend.global.error.Team.TeamAlreadyJoinException;
+import PNUMEAT.Backend.global.error.Team.TeamManagerInvalidException;
 import PNUMEAT.Backend.global.error.Team.TeamNotFoundException;
 import PNUMEAT.Backend.global.error.Team.TeamPasswordInvalidException;
 import PNUMEAT.Backend.global.images.ImageService;
@@ -22,8 +22,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import static PNUMEAT.Backend.global.error.ErrorCode.*;
 
 @Service
 @Transactional(readOnly = true)
@@ -81,6 +79,20 @@ public class TeamService {
         validateTeamMembership(team, member);
 
         return teamMemberRepository.save(new TeamMember(team, member));
+    }
+
+    @Transactional
+    public Team updateTeamAnnouncement(Member member, String teamAnnouncement, Long teamId){
+        Team team = teamRepository.findById(teamId)
+                .orElseThrow(TeamNotFoundException::new);
+
+        if(!member.getUuid().equals(team.getTeamManager().getUuid())) {
+            throw new TeamManagerInvalidException();
+        }
+
+        team.updateTeamAnnouncement(teamAnnouncement);
+
+        return team;
     }
 
     private void validatePassword(String password, Team team) {

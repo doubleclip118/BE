@@ -35,6 +35,8 @@ public class Team extends TimeStamp {
 
     private int streakDays = 0;
 
+    private String teamAnnouncement="";
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member teamManager;
@@ -58,4 +60,6 @@ public class Team extends TimeStamp {
     public void updateTeamIconUrl(String teamIconUrl){
         this.teamIconUrl = teamIconUrl;
     }
+
+    public void updateTeamAnnouncement(String teamAnnouncement) { this.teamAnnouncement = teamAnnouncement; }
 }

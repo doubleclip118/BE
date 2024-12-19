@@ -9,6 +9,7 @@ public enum ResponseMessageEnum {
     TEAM_TOTAL_DETAILS_SUCCESS("전체 팀을 성공적으로 조회했습니다.",200),
     MY_TEAM_DETAILS_SUCCESS("나의 팀을 성공적으로 조회했습니다.",200),
     TEAM_JOIN_SUCCESS("팀에 성공적으로 가입했습니다.", 200),
+    TEAM_ANNOUNCEMENT_UPDATE_SUCCESS("팀 공지가 성공적으로 업데이트되었습니다.", 200),
 
     //Article
     ARTICLE_CREATE_SUCCESS("게시글이 성공적으로 생성되었습니다.",201),
