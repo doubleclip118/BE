@@ -1,6 +1,7 @@
 package PNUMEAT.Backend.domain.team.controller;
 
 import PNUMEAT.Backend.domain.auth.entity.Member;
+import PNUMEAT.Backend.domain.team.dto.request.TeamAnnouncementRequest;
 import PNUMEAT.Backend.domain.team.dto.request.TeamJoinRequest;
 import PNUMEAT.Backend.domain.team.dto.request.TeamRequest;
 import PNUMEAT.Backend.domain.team.dto.response.MyTeamResponse;
@@ -105,6 +106,17 @@ public class TeamController {
         return ResponseEntity.status(TEAM_JOIN_SUCCESS.getStatusCode())
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(ApiResponse.successResponseWithMessage(TEAM_JOIN_SUCCESS.getMessage()));
+    }
+
+    @PatchMapping("/{teamId}/announcement")
+    public ResponseEntity<ApiResponse<?>> updateTeamAnnouncement(@PathVariable("teamId") Long teamId,
+                                                                 @RequestBody @Valid TeamAnnouncementRequest teamAnnouncementRequest,
+                                                                 @LoginMember Member member) {
+        teamService.updateTeamAnnouncement(member, teamAnnouncementRequest.teamAnnouncement(), teamId);
+
+        return ResponseEntity.status(TEAM_ANNOUNCEMENT_UPDATE_SUCCESS.getStatusCode())
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(ApiResponse.successResponseWithMessage(TEAM_ANNOUNCEMENT_UPDATE_SUCCESS.getMessage()));
     }
 }
 

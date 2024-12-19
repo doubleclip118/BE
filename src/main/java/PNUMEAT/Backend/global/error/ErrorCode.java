@@ -19,15 +19,14 @@ public enum ErrorCode {
 
     //ARTICLE
     ARTICLE_FORBIDDEN_ERROR(HttpStatus.FORBIDDEN, "게시글 권한이 없습니다."),
+    ARTICLE_NOT_FOUND_ERROR(HttpStatus.NOT_FOUND, "존재 하지 않는 게시글 입니다."),
 
     //TEAM
     TOPIC_INVALID_ERROR(HttpStatus.BAD_REQUEST, "주제가 올바른 형식이 아닙니다."),
     TEAM_NOT_FOUND_ERROR(HttpStatus.NOT_FOUND, "팀이 존재하지 않습니다."),
     TEAM_PASSWORD_INVALID(HttpStatus.BAD_REQUEST, "팀 비밀번호가 옳지 않습니다."),
     TEAM_ALREADY_JOIN(HttpStatus.CONFLICT, "이미 팀에 가입했습니다."),
-
-    // ARTICLE
-    ARTICLE_NOT_FOUND_ERROR(HttpStatus.NOT_FOUND, "존재 하지 않는 게시글 입니다."),
+    TEAM_MANAGER_INVALID_ERROR(HttpStatus.BAD_REQUEST, "팀의 매니저가 옳지 않습니다."),
 
     //IMAGE
     IMAGE_FILE_UPLOAD_ERROR(HttpStatus.BAD_REQUEST,"이미지 파일 업로드 에러발생."),

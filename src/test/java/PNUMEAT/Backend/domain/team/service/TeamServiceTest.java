@@ -265,4 +265,52 @@ class TeamServiceTest {
                 .teamManager(teamManager)
                 .build();
     }
+
+    @Test
+    @DisplayName("팀 공지 업데이트 하기 - 정상 업데이트")
+    void updateTeamAnnouncement_정상_업데이트() {
+        // given
+        Long teamId = team2.getTeamId();
+        String teamAnnouncement = "팀 공지 입니다.";
+
+        given(teamRepository.findById(teamId)).willReturn(Optional.of(team2));
+
+        // when
+        Team team = teamService.updateTeamAnnouncement(member, teamAnnouncement, teamId);
+
+        // then
+        assertThat(team.getTeamId()).isEqualTo(teamId);
+        assertThat(team.getTeamManager().getUuid()).isEqualTo(member.getUuid());
+        assertThat(team.getTeamAnnouncement()).isEqualTo(teamAnnouncement);
+
+    }
+
+    @Test
+    @DisplayName("팀 공지 올리기 - 팀이 존재하지 않을 때")
+    void updateTeamAnnouncement_팀이_존재하지_않을_때() {
+        // given
+        Long teamId = team2.getTeamId();
+        String teamAnnouncement = "팀 공지 입니다.";
+        given(teamRepository.findById(teamId)).willReturn(Optional.empty());
+
+        // expected
+        assertThatThrownBy(() -> teamService.updateTeamAnnouncement(member, teamAnnouncement, teamId))
+                .isInstanceOf(ComonException.class)
+                .hasMessage(TEAM_NOT_FOUND_ERROR.getMessage());
+    }
+
+    @Test
+    @DisplayName("팀 공지 올리기 - 팀의 매니저가 아닐 때")
+    void updateTeamAnnouncement_팀의_매니저가_아닐_때() {
+        // given
+        Long teamId = team2.getTeamId();
+        String teamAnnouncement = "팀 공지 입니다.";
+        Member invalidMember = new Member("INVALID", "INVALID", "ROLE_USER");
+        given(teamRepository.findById(teamId)).willReturn(Optional.of(team2));
+
+        // expected
+        assertThatThrownBy(() -> teamService.updateTeamAnnouncement(invalidMember, teamAnnouncement, teamId))
+                .isInstanceOf(ComonException.class)
+                .hasMessage(TEAM_MANAGER_INVALID_ERROR.getMessage());
+    }
 }
