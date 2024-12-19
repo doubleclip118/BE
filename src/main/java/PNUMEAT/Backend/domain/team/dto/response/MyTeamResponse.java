@@ -16,6 +16,7 @@ public record MyTeamResponse(Long teamId,
                               int memberCount,
                               int streakDays,
                               int successMemberCount,
+                              String teamAnnouncement,
                               LocalDate createdAt,
                               List<MemberProfileResponse> members) {
 
@@ -30,6 +31,7 @@ public record MyTeamResponse(Long teamId,
                 team.getTeamMembers().size(),
                 team.getStreakDays(),
                 0, // 게시물 엔티티 없는 관계로 0으로 설정
+                team.getTeamAnnouncement(),
                 team.getCreatedDate().toLocalDate(),
                 team.getTeamMembers().stream()
                         .map(tm -> MemberProfileResponse.of(tm.getMember()))
