@@ -1,8 +1,5 @@
 package PNUMEAT.Backend.domain.article.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
-
 import PNUMEAT.Backend.domain.article.dto.request.ArticleRequest;
 import PNUMEAT.Backend.domain.article.entity.Article;
 import PNUMEAT.Backend.domain.article.entity.ArticleImage;
@@ -14,86 +11,129 @@ import PNUMEAT.Backend.domain.auth.repository.MemberRepository;
 import PNUMEAT.Backend.domain.team.entity.Team;
 import PNUMEAT.Backend.domain.team.enums.Topic;
 import PNUMEAT.Backend.domain.team.repository.TeamRepository;
+import PNUMEAT.Backend.domain.teamMember.repository.TeamMemberRepository;
+import PNUMEAT.Backend.global.error.Member.MemberNotFoundException;
+import PNUMEAT.Backend.global.error.articles.MemberNotInTeamException;
+import PNUMEAT.Backend.global.error.articles.UnauthorizedActionException;
 import PNUMEAT.Backend.global.images.ImageService;
-
-import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@ExtendWith(MockitoExtension.class)
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+
+@SpringBootTest
+@Transactional
 class ArticleServiceTest {
 
-    @Mock
-    private ArticleRepository articleRepository;
-
-    @Mock
-    private MemberRepository memberRepository;
-
-    @Mock
-    private TeamRepository teamRepository;
-
-    @Mock
-    private ArticleImageRepository articleImageRepository;
-
-    @Mock
-    private ImageService imageService;
-
-    @InjectMocks
+    @Autowired
     private ArticleService articleService;
 
-    @Test
-    @DisplayName("게시글 저장 시 이미지가 함께 저장된다.")
-    void save_ShouldSaveArticleWithImage() {
-        // Given
-        Member member = new Member( "username", "email@example.com", "ROLE_USER");
-        Team team = new Team( "Team Name", Topic.CODINGTEST, "Description", 10, "password", member);
+    @MockBean
+    private ArticleRepository articleRepository;
 
-        ArticleRequest request = new ArticleRequest(1L, ArticleCategory.NOMAL, "Title", "Body");
-        MultipartFile image = new MockMultipartFile("image", "image.jpg", "image/jpeg", "test-image".getBytes());
+    @MockBean
+    private MemberRepository memberRepository;
 
-        when(memberRepository.findById(1L)).thenReturn(Optional.of(member));
-        when(teamRepository.findById(1L)).thenReturn(Optional.of(team));
-        when(imageService.articleImageUpload(image)).thenReturn("uploaded-image-url");
+    @MockBean
+    private TeamRepository teamRepository;
 
-        // When
-        articleService.save(1L, request, image);
+    @MockBean
+    private TeamMemberRepository teamMemberRepository;
 
-        // Then
-        verify(articleRepository, times(1)).save(any(Article.class));
-        verify(articleImageRepository, times(1)).save(any(ArticleImage.class));
-        verify(imageService, times(1)).articleImageUpload(image);
+    @MockBean
+    private ArticleImageRepository articleImageRepository;
+
+    @MockBean
+    private ImageService imageService;
+
+    private Member testMember;
+    private Team testTeam;
+    private Article testArticle;
+
+    @BeforeEach
+    void setup() {
+        testMember = new Member("test@example.com", "testuser", "USER");
+
+        testTeam = new Team("Test Team", Topic.STUDY, "This is a test team.", 10, "password", testMember);
+
+        testArticle = new Article(
+            testTeam,
+            testMember,
+            "Test Title",
+            "Test Body",
+            null,
+            new ArrayList<>()
+        );
+
+        when(memberRepository.findById(1L)).thenReturn(Optional.of(testMember));
+        when(memberRepository.findById(99L)).thenReturn(Optional.empty());
+
+        when(teamRepository.findById(1L)).thenReturn(Optional.of(testTeam));
+        when(teamRepository.findById(99L)).thenReturn(Optional.empty());
+
+        when(teamMemberRepository.existsByTeamTeamIdAndMemberId(1L, 1L)).thenReturn(true);
+        when(teamMemberRepository.existsByTeamTeamIdAndMemberId(1L, 99L)).thenReturn(false);
+
+        when(articleRepository.findByIdWithImages(1L)).thenReturn(Optional.of(testArticle));
+        when(articleRepository.findById(1L)).thenReturn(Optional.of(testArticle));
+        when(articleRepository.findById(99L)).thenReturn(Optional.empty());
+
+        when(imageService.articleImageUpload(any())).thenReturn("http://image-url.com");
     }
 
 
     @Test
-    @DisplayName("멤버의 게시글 목록을 이미지와 함께 반환한다.")
-    void getMyArticles_ShouldReturnArticlesWithImages() {
-        // Given
-        ArticleImage articleImage = new ArticleImage(1L, "image-url", null);
-        Article article = Article.builder()
-            .articleId(1L)
-            .articleTitle("Title")
-            .articleBody("Body")
-            .articleCategory(ArticleCategory.NOMAL)
-            .images(List.of(articleImage))
-            .build();
+    void save_withValidData_shouldSaveArticle() {
+        ArticleRequest articleRequest = new ArticleRequest(1L, ArticleCategory.NOMAL, "Test Title", "Test Body");
+        MockMultipartFile mockImage = new MockMultipartFile(
+            "image", "image.jpg", "image/jpeg", "mock-image-content".getBytes()
+        );
 
-        when(articleRepository.findByMemberIdWithImages(1L)).thenReturn(List.of(article));
+        articleService.save(1L, articleRequest, mockImage);
 
-        // When
-        List<Article> result = articleService.getMyArticles(1L);
+        Mockito.verify(articleRepository).save(Mockito.any(Article.class));
+        Mockito.verify(articleImageRepository).save(Mockito.any(ArticleImage.class));
+    }
 
-        // Then
-        assertThat(result).hasSize(1);
-        assertThat(result.get(0).getArticleTitle()).isEqualTo("Title");
-        assertThat(result.get(0).getImages().get(0).getImageUrl()).isEqualTo("image-url");
+    @Test
+    void save_withNonExistingMember_shouldThrowException() {
+        when(memberRepository.findById(99L)).thenReturn(Optional.empty());
+        ArticleRequest articleRequest = new ArticleRequest(1L, ArticleCategory.NOMAL, "Test Title", "Test Body");
+        MockMultipartFile mockImage = new MockMultipartFile(
+            "image", "image.jpg", "image/jpeg", "mock-image-content".getBytes()
+        );
+
+        assertThrows(MemberNotFoundException.class, () -> articleService.save(99L, articleRequest, mockImage));
+    }
+
+    @Test
+    void getMyArticles_shouldReturnArticles() {
+        when(articleRepository.findByMemberIdWithImages(1L)).thenReturn(List.of(testArticle));
+
+        List<Article> articles = articleService.getMyArticles(1L);
+
+        assertThat(articles).hasSize(1);
+        assertThat(articles.get(0).getArticleTitle()).isEqualTo("Test Title");
+    }
+
+    @Test
+    void isMemberInTeam_withNonExistingMember_shouldThrowException() {
+        when(teamMemberRepository.existsByTeamTeamIdAndMemberId(1L, 99L)).thenReturn(false);
+
+        assertThrows(MemberNotInTeamException.class, () -> articleService.isMemberInTeam(99L, 1L));
     }
 }
