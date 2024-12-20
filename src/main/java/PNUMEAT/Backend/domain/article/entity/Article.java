@@ -9,16 +9,12 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
 @Table(name = "article")
 public class Article extends TimeStamp {
 
@@ -54,5 +50,17 @@ public class Article extends TimeStamp {
     }
     public void updateCategory(ArticleCategory articleCategory){
         this.articleCategory = articleCategory;
+    }
+
+    public Article() {}
+
+    public Article(Team team, Member member, String articleTitle, String articleBody,
+        ArticleCategory articleCategory, List<ArticleImage> images) {
+        this.team = team;
+        this.member = member;
+        this.articleTitle = articleTitle;
+        this.articleBody = articleBody;
+        this.articleCategory = articleCategory;
+        this.images = images;
     }
 }
