@@ -1,6 +1,9 @@
 package PNUMEAT.Backend.domain.article.repository;
 
 import PNUMEAT.Backend.domain.article.entity.Article;
+import java.time.LocalDate;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -20,6 +23,12 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
 
     @Query("SELECT a FROM Article a LEFT JOIN FETCH a.images WHERE a.articleId = :articleId")
     Optional<Article> findByIdWithImages(@Param("articleId") Long articleId);
+
+    @Query("SELECT a FROM Article a WHERE a.team.teamId = :teamId AND DATE(a.createdDate) = :date")
+    Page<Article> findByTeamIdAndDate(@Param("teamId") Long teamId, @Param("date") LocalDate date, Pageable pageable);
+
+
+
 
 
 }

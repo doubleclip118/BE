@@ -11,12 +11,19 @@ import PNUMEAT.Backend.domain.auth.entity.Member;
 import PNUMEAT.Backend.domain.auth.repository.MemberRepository;
 import PNUMEAT.Backend.domain.team.entity.Team;
 import PNUMEAT.Backend.domain.team.repository.TeamRepository;
+import PNUMEAT.Backend.domain.teamMember.repository.TeamMemberRepository;
 import PNUMEAT.Backend.global.error.Member.MemberNotFoundException;
 import PNUMEAT.Backend.global.error.Team.TeamNotFoundException;
 import PNUMEAT.Backend.global.error.articles.ArticleNotFoundException;
+import PNUMEAT.Backend.global.error.articles.MemberNotInTeamException;
+import PNUMEAT.Backend.global.error.articles.UnauthorizedActionException;
 import PNUMEAT.Backend.global.images.ImageService;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import org.springframework.transaction.annotation.Transactional;
@@ -32,15 +39,19 @@ public class ArticleService {
     private final TeamRepository teamRepository;
     private final ArticleImageRepository articleImageRepository;
 
+    private final TeamMemberRepository teamMemberRepository;
+
     public ArticleService(ImageService imageService, ArticleRepository articleRepository,
         MemberRepository memberRepository, TeamRepository teamRepository,
-        ArticleImageRepository articleImageRepository) {
+        ArticleImageRepository articleImageRepository, TeamMemberRepository teamMemberRepository) {
         this.imageService = imageService;
         this.articleRepository = articleRepository;
         this.memberRepository = memberRepository;
         this.teamRepository = teamRepository;
         this.articleImageRepository = articleImageRepository;
+        this.teamMemberRepository = teamMemberRepository;
     }
+
 
     @Transactional
     public void save(Long memberId, ArticleRequest articleRequest, MultipartFile images){
@@ -53,12 +64,8 @@ public class ArticleService {
             TeamNotFoundException::new
         );
 
-        Article article = Article.builder()
-            .articleTitle(articleRequest.articleTitle())
-            .articleBody(articleRequest.articleBody())
-            .member(member)
-            .team(team)
-            .build();
+        Article article = new Article(team,member,articleRequest.articleTitle()
+            ,articleRequest.articleBody(),articleRequest.articleCategory(), new ArrayList<>());
 
         articleRepository.save(article);
 
@@ -83,33 +90,57 @@ public class ArticleService {
     }
 
     @Transactional
-    public void deleteArticle(Long articleId) {
+    public void deleteArticle(Long articleId,Long memberId) {
         Article article = articleRepository.findById(articleId).orElseThrow(
             ArticleNotFoundException::new
         );
+
+        if (!article.getMember().getId().equals(memberId)) {
+            throw new UnauthorizedActionException();
+        }
 
         articleRepository.delete(article);
     }
 
     @Transactional
-    public void updateArticle(Long articleId, ArticleRequest articleRequest, MultipartFile image) {
+    public void updateArticle(Long articleId, ArticleRequest articleRequest, MultipartFile image, Long memberId) {
         Article article = articleRepository.findByIdWithImages(articleId).orElseThrow(
             ArticleNotFoundException::new
         );
+
+        if (!article.getMember().getId().equals(memberId)) {
+            throw new UnauthorizedActionException();
+        }
 
         updateArticleFields(article, articleRequest);
 
         handleImageUpdate(article, image);
     }
 
+    @Transactional(readOnly = true)
+    public Page<Article> getArticlesByTeamAndDate(Long teamId, LocalDate date, Pageable pageable) {
+        return articleRepository.findByTeamIdAndDate(teamId, date, pageable);
+    }
+
+
+    @Transactional(readOnly = true)
+    public void isMemberInTeam(Long memberId, Long teamId) {
+        if(!teamMemberRepository.existsByTeamTeamIdAndMemberId(teamId, memberId)){
+            throw new MemberNotInTeamException();
+        }
+    }
+
+
+
+
     private void handleImageUpload(Article article, MultipartFile images) {
         if (images != null && !images.isEmpty()) {
             String imageUrl = imageService.articleImageUpload(images);
 
-            ArticleImage articleImage = ArticleImage.builder()
-                .article(article)
-                .imageUrl(imageUrl)
-                .build();
+            ArticleImage articleImage = new ArticleImage(imageUrl,article);
+
+            article.getImages().add(articleImage);
+
 
             articleImageRepository.save(articleImage);
         }
@@ -141,12 +172,12 @@ public class ArticleService {
 
             String newImageUrl = imageService.articleImageUpload(image);
 
-            ArticleImage newArticleImage = ArticleImage.builder()
-                .article(article)
-                .imageUrl(newImageUrl)
-                .build();
-            article.getImages().add(newArticleImage);
+            ArticleImage articleImage = new ArticleImage(newImageUrl,article);
+
+            article.getImages().add(articleImage);
         }
     }
+
+
 
 }
