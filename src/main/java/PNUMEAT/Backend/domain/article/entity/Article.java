@@ -63,4 +63,11 @@ public class Article extends TimeStamp {
         this.articleCategory = articleCategory;
         this.images = images;
     }
+
+    public void addImage(ArticleImage image) {
+        images.add(image);
+        image.updateArticle(this);
+    }
+
+
 }

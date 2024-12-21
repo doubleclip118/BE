@@ -29,4 +29,8 @@ public class ArticleImage {
     public ArticleImage() {
 
     }
+
+    public void updateArticle(Article article) {
+        this.article = article;
+    }
 }
