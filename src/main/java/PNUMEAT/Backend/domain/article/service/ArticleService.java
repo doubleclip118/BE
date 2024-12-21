@@ -137,14 +137,14 @@ public class ArticleService {
         if (images != null && !images.isEmpty()) {
             String imageUrl = imageService.articleImageUpload(images);
 
-            ArticleImage articleImage = new ArticleImage(imageUrl,article);
+            ArticleImage articleImage = new ArticleImage(imageUrl, article);
 
-            article.getImages().add(articleImage);
-
+            article.addImage(articleImage);
 
             articleImageRepository.save(articleImage);
         }
     }
+
 
     private void updateArticleFields(Article article, ArticleRequest articleRequest) {
         if (articleRequest.articleTitle() != null) {
@@ -160,23 +160,26 @@ public class ArticleService {
 
     private void handleImageUpdate(Article article, MultipartFile image) {
         if (image != null && !image.isEmpty()) {
-            // 1. 기존 이미지 삭제
             ArticleImage existingImage = article.getImages().stream()
-                .findFirst() // 첫 번째 이미지를 삭제 대상으로 가정
+                .findFirst()
                 .orElse(null);
 
             if (existingImage != null) {
                 imageService.deleteImageByUrl(existingImage.getImageUrl());
                 article.getImages().remove(existingImage);
+                articleImageRepository.delete(existingImage);
             }
 
+            // 2. 새 이미지 추가
             String newImageUrl = imageService.articleImageUpload(image);
 
-            ArticleImage articleImage = new ArticleImage(newImageUrl,article);
+            ArticleImage articleImage = new ArticleImage(newImageUrl, article);
 
-            article.getImages().add(articleImage);
+            article.addImage(articleImage);
+            articleImageRepository.save(articleImage);
         }
     }
+
 
 
 
