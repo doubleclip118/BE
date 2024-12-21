@@ -142,16 +142,12 @@ public class ArticleController {
         @LoginMember Member member,
         @PageableDefault(size = 10, sort = "createdDate", direction = Sort.Direction.DESC) Pageable pageable) {
 
-        // 팀 멤버 확인
         articleService.isMemberInTeam(member.getId(), teamId);
 
-        // 페이지네이션된 결과 가져오기
         Page<Article> articlePage = articleService.getArticlesByTeamAndDate(teamId, date, pageable);
 
-        // Article -> ArticleResponse로 매핑
         Page<ArticleResponse> responsePage = articlePage.map(ArticleResponse::of);
 
-        // 응답 반환
         return ResponseEntity.status(HttpStatus.OK)
             .contentType(MediaType.APPLICATION_JSON)
             .body(ApiResponse.successResponse(responsePage));
